@@ -1,0 +1,18 @@
+create past meeting
+
+1. how about on opening iterating through the future meetings list (or maybe at the end)
+2. sys: check whether date has passed
+3. sys: if no, continue to next meeting
+4. sys: if yes, prompt user to update records with meeting notes
+5. user: yes, type notes [version 2 would allow file upload]
+6. sys: addPastMeeting(contacts, date, notes). need to getContacts, getDate
+7. sys: Meeting pastMeeting = new PastMeeting(params);
+8. sys: remove future meeting from future meetings list;
+
+what if date passed and they don't want to update?
+I would do the same but without user input and set notes to "date passed, no confirmation that meeting occurred"
+
+alt flow1
+5. user: no.
+6. sys: addPastMeeting(getID, date, "date passed, no confirmation that meeting occurred")
+7. return to normal flow 7.

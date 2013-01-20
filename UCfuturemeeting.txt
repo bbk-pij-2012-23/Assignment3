@@ -1,0 +1,37 @@
+Use case: create future meeting
+
+
+normal flow
+1. having selected to create a new meeting…
+2. sys: prompt for date
+3. user: supply date
+4. sys:  pass date to create participant list method
+5. sys: prompt for names
+6. user: type name
+7. sys: pass name string to get name method
+8. sys: getContacts.add(name)
+9. sys: prompt for next name
+10. repeat 5-9 until exit condition met (e.g. user types -1)
+11. sys: pass participants and date to create meeting method
+12. sys:  return meeting id
+13. sys: print confirmation message and
+
+
+alternate flow af1
+7. sys:  try getName method, catch exception and print "no such person, want to create them?"
+8. user: yes
+9. sys: creating + String name + , do you want to add notes about this person? if so type them below, else just press enter.
+10. user: input
+11. sys: 1.pass name and notes to createContact method
+12. get name, getcontactlist.add(get name)
+13. return to 9 on normal flow
+
+af2
+7. sys:  try getName method, catch exception and print "no such person, want to create them?"
+8. user: no
+9. sys: return to 9 on normal flow
+
+af3
+11. sys: list contains no participants, meeting wil not be created
+
+
