@@ -1,0 +1,9 @@
+issues to address:
+1. how to return an empty string if getNotes is null - will specifying it in field suffice?
+2. what to do with meeting: don't want to duplicate code so implement meeting then extend. seems like abstract class would be appropriate, but why bother?
+3. implements/extends correct notation for PastMeetingImpl implements PastMeeting, extends MeetingImpl?
+4. Future meeting class being just a naming interface… what the hell?
+5. how am I going to keep track of ids created? maybe store in a stack and peep? Although aren't meetings stored in a set? call getAllMeetingsIds method and then add 1 to the result? create a latestID field?  
+6. who creates contact lists? 
+7. whats the user interface going to be?
+8.need to look up the implementation of try methods again
