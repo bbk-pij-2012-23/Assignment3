@@ -1,6 +1,8 @@
 import java.util.Calendar; 
 import java.util.Set; 
 
+import assignment3.Contact;
+
 /**
 *  A class to represent meetings * 
 *  Meetings have unique IDs, scheduled date and a list of participating contacts */ 
