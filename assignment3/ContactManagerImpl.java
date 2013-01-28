@@ -11,7 +11,28 @@ public class ContactManagerImpl implements ContactManager {
 	private Set<Contact> allContacts;
 	
 	
+	
 	public ContactManagerImpl() {
+	}
+	
+	/**
+	 * 
+	 * @param meetingList
+	 */
+	private void setMeetingList(List<Meeting> meetingList){  //for testing
+		this.meetingList = meetingList;
+	}
+	
+	/**
+	 * 
+	 * @param allContacts
+	 */
+	public void setAllContacts(Set<Contact> allContacts){ //for testing
+		this.allContacts = allContacts;
+	}
+	
+	public Set<Contact> getAllContacts() {
+	 	return allContacts;
 	}
 	
 	//other methods here to create a set of contacts and date to pass to this method
@@ -80,14 +101,33 @@ public class ContactManagerImpl implements ContactManager {
 		//work out how to call the right instantiation of PastMeeting and assign notes to its notes field 
 		((PastMeetingImpl) meeting).setNotes(text);
 	}	
-		
-	public void addNewContact(String name, String notes) {
-		// count contacts in Set<Contact> contacts
-		int id = allContacts.size() + 1;
-		Contact newContact = new ContactImpl(name, id);
-		if (!notes.equals("")){
-			newContact.addNotes(notes);
+	
+	/**
+	* Create a new contact with the specified name and notes.
+	*
+	* @param name the name of the contact.
+	* @param notes notes to be added about the contact.
+	* @throws NullPointerException if the name or the notes are null
+	*/
+	public void addNewContact(String name, String notes) throws NullPointerException {
+		int id = 0;
+		if(getAllContacts()==null){
+			Set<Contact>allContacts = new HashSet<Contact>();
+			this.setAllContacts(allContacts);
+			id = 1;
 		}
+		else{
+			id = allContacts.size() + 1;
+		}
+//		try{
+			Contact newContact = new ContactImpl(name, id);
+			allContacts.add(newContact);
+//		}catch(NullPointerException ex){
+//			ex.printStackTrace();
+			//how do I distinguish between two sources of NullPointerException?
+			// if null notes continue, else if (!notes.equals("")){newContact.addNotes(notes);}
+			//if null name prompt for a name;
+		}		//to add "successful completion" user feedback
 	}
 
 	@Override
@@ -110,19 +150,24 @@ public class ContactManagerImpl implements ContactManager {
 		//what about regex?
 		return names;
 	}
-
+	
 	@Override
 	public void flush() {
 		// TODO Auto-generated method stub
 
 	}
 
+	private void launch(){
+		Set<Contact> allContacts = new HashSet<Contact>();
+		this.setAllContacts(allContacts);
+		//create a meeting list also
+	}
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		ContactManagerImpl run = new ContactManagerImpl();
+		run.launch();
 	}
 
 }
