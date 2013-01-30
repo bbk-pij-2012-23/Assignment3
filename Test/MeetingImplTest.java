@@ -1,4 +1,4 @@
-package assignment3;
+package Test;
 
 import static org.junit.Assert.*;
 
@@ -6,6 +6,11 @@ import org.junit.After;
 import org.junit.Before;
 
 import org.junit.Test;
+
+import assignment3.Contact;
+import assignment3.ContactImpl;
+import assignment3.Meeting;
+import assignment3.MeetingImpl;
 
 
 import java.util.Calendar;
@@ -15,12 +20,14 @@ import java.util.Set;
 
 public class MeetingImplTest {
 	private Meeting catchup;
-	
-
+    private Calendar c = Calendar.getInstance();
+   
+    
 	
 	@Before
 	public void setUp() throws Exception {
-		Calendar date = new GregorianCalendar(2013,0,21);
+		c.set(2013,0,21);
+		Calendar date = c;//new GregorianCalendar(2013,0,21);
 		Set<Contact> contacts = new HashSet<Contact>();
 		Contact bob = new ContactImpl("bob", 1);
 		Contact sally = new ContactImpl("sally", 2);
@@ -47,6 +54,7 @@ public class MeetingImplTest {
 	public void testGetDate() {
 		
 		assertNotNull(catchup.getDate()); //doesn't test much but its a start
+		assertEquals(c, catchup.getDate());
 	}
 
 	@Test

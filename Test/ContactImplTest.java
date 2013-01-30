@@ -1,10 +1,13 @@
-package assignment3;
+package Test;
 
 import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import assignment3.Contact;
+import assignment3.ContactImpl;
 
 public class ContactImplTest {
 	private Contact bob;
