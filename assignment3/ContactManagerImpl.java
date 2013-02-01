@@ -8,6 +8,7 @@ import java.util.Set;
 
 public class ContactManagerImpl implements ContactManager {
 	private List<Meeting> meetingList;
+	private List<Meeting> pastMeetingList; //to be changed to pastMeeting
 	private Set<Contact> allContacts;
 	
 	
@@ -19,7 +20,7 @@ public class ContactManagerImpl implements ContactManager {
 	 * 
 	 * @param meetingList
 	 */
-	private void setMeetingList(List<Meeting> meetingList){  //for testing
+	public void setMeetingList(List<Meeting> meetingList){  //for testing
 		this.meetingList = meetingList;
 	}
 	
@@ -31,20 +32,39 @@ public class ContactManagerImpl implements ContactManager {
 		this.allContacts = allContacts;
 	}
 	
+	
 	public Set<Contact> getAllContacts() {
 	 	return allContacts;
 	}
 	
+	public List<Meeting> getMeetingList(){
+		return meetingList;
+	}
+	
 	//other methods here to create a set of contacts and date to pass to this method
-	public int addFutureMeeting(Set<Contact> contacts, Calendar date) {
+	@Override
+	public int addFutureMeeting(Set<Contact> contacts, Calendar date) throws IllegalArgumentException{
 		// create a FutureMeeting, add it to a List<Meeting>		
 		int meetingId = 0;
-		Meeting meeting = new FutureMeetingImpl();
+		if (getMeetingList() == null){
+			meetingId = 1;
+		}
+		else{
+			meetingId = getMeetingList().size() +1;
+		}
+		Meeting meeting = new MeetingImpl(date, meetingId, contacts);
+		meetingList.add(meeting);
 		return meetingId;
 	}
 
+	
+	public Meeting getPastMeetingList(){
+		return pastMeetingList;
+	}
+	
 	@Override	
 	public PastMeeting getPastMeeting(int id) {
+		
 		//after FutureMeeting date has passed, look up meeting in List<Meeting> 
 		// convert it to a PastMeeting meeting
 		return meeting;  
@@ -127,8 +147,9 @@ public class ContactManagerImpl implements ContactManager {
 			//how do I distinguish between two sources of NullPointerException?
 			// if null notes continue, else if (!notes.equals("")){newContact.addNotes(notes);}
 			//if null name prompt for a name;
-		}		//to add "successful completion" user feedback
-	}
+	
+	}		//to add "successful completion" user feedback
+	
 
 	@Override
 	public Set<Contact> getContacts(int... ids) {
