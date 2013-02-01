@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class ContactManagerImpl implements ContactManager {
 	private List<Meeting> meetingList;
-	private List<Meeting> pastMeetingList; //to be changed to pastMeeting
+	private List<PastMeeting> pastMeetingList; 
 	private Set<Contact> allContacts;
 	
 	
@@ -22,6 +22,10 @@ public class ContactManagerImpl implements ContactManager {
 	 */
 	public void setMeetingList(List<Meeting> meetingList){  //for testing
 		this.meetingList = meetingList;
+	}
+	
+	public void setPastMeetingList(List<PastMeeting> pastMeetingList){
+		this.pastMeetingList = pastMeetingList;
 	}
 	
 	/**
@@ -41,6 +45,10 @@ public class ContactManagerImpl implements ContactManager {
 		return meetingList;
 	}
 	
+	public List<PastMeeting> getPastMeetingList(){
+		return pastMeetingList;
+	}
+	
 	//other methods here to create a set of contacts and date to pass to this method
 	@Override
 	public int addFutureMeeting(Set<Contact> contacts, Calendar date) throws IllegalArgumentException{
@@ -57,29 +65,69 @@ public class ContactManagerImpl implements ContactManager {
 		return meetingId;
 	}
 
-	
-	public Meeting getPastMeetingList(){
-		return pastMeetingList;
-	}
-	
+	/**
+	*Returns the PAST meeting with the requested ID, or null if it there is none.
+	* does this by checking all meetings for id - if none returns null, 
+	* if meeting exists then tries to get meeting from pastMeetingList, and catches exception if 
+	* not there (i.e. has not passed yet (meetings are updated on opening). 
+	* Version 2 would have a better update method (if left open for a long time, meetings might pass without being updated
+	* 
+	* @param id the ID for the meeting
+	* @return the meeting with the requested ID, or null if it there is none.
+	* @throws IllegalArgumentException if there is a meeting with that ID happening in the future Method checks whether meeting exists by checking eetings 
+	*/
 	@Override	
 	public PastMeeting getPastMeeting(int id) {
-		
-		//after FutureMeeting date has passed, look up meeting in List<Meeting> 
-		// convert it to a PastMeeting meeting
-		return meeting;  
+		//look up meeting in pastMeetingList
+		PastMeeting meeting = null;
+		if(getMeeting(id) == null){ //no meeting with that id;
+			return meeting;
+		}
+		else{
+			try{
+				meeting = getPastMeetingList().get(id);
+			}catch (IllegalArgumentException ex){
+				ex.printStackTrace();
+				System.out.println("This meeting has not happened yet");
+			}
+		}	
+		return meeting;  //this will need to be formated somehow;
 	}
-
+	/**
+	* Returns the FUTURE meeting with the requested ID, or null if there is none.
+	*
+	* @param id the ID for the meeting
+	* @return the meeting with the requested ID, or null if it there is none.
+	* @throws IllegalArgumentException if there is a meeting with that ID happening in the past
+	*/
 	@Override
 	public FutureMeeting getFutureMeeting(int id) {
-		//before FutureMeeting date has passed, look up meeting in List<Meeting> 
+		FutureMeeting meeting = null;
+		try{
+			meeting = (FutureMeeting) getMeetingList().get(id -1);
+		}catch(IllegalArgumentException ex){
+			ex.printStackTrace();
+		}
 		return meeting;
 	}
 
 	@Override
 	public Meeting getMeeting(int id) {
-		//not really sure what this does or why its different from the more specific methods
+		Meeting meeting = null;
+		
+		if(getMeetingList().get(id-1)==null){
+			System.out.println("no meetings with id " + id);
+			return meeting;
+		}
+		else if (getMeetingList().get(id-1).getDate().before(Calendar.getInstance())){
+			meeting = (Meeting) getPastMeeting(id);
+		}
+		else{
+			meeting = (Meeting) getFutureMeeting(id);
+		}
+		
 		return meeting;
+		
 	}
 
 	@Override
@@ -172,6 +220,23 @@ public class ContactManagerImpl implements ContactManager {
 		return names;
 	}
 	
+	/* on opening or closing */
+	
+	public void updateMeetingList(){ //to be run on opening
+		List<Meeting> meetingList = getMeetingList();
+		if(getPastMeetingList() ==null){
+			List<PastMeeting> pastMeetingList = new LinkedList<PastMeeting>();
+			setPastMeetingList(pastMeetingList);
+		}		
+		int i = 0;
+		while(i<meetingList.size()){
+			if(meetingList.get(i).getDate().before(Calendar.getInstance())){
+				pastMeetingList.add((PastMeeting) meetingList.get(i)); //dont think this casting works
+			}	
+			i++;
+		}	
+	}
+	
 	@Override
 	public void flush() {
 		// TODO Auto-generated method stub
@@ -181,6 +246,7 @@ public class ContactManagerImpl implements ContactManager {
 	private void launch(){
 		Set<Contact> allContacts = new HashSet<Contact>();
 		this.setAllContacts(allContacts);
+		
 		//create a meeting list also
 	}
 	/**

@@ -7,3 +7,8 @@ issues to address:
 6. who creates contact lists? 
 7. whats the user interface going to be?
 8.need to look up the implementation of try methods again
+
+
+9. having some problems with casting and inheritance - need to read up on that again
+10. need more info about exception handling - having problems sepcifying conditions when to throw exceptions when they don't crash out
+
