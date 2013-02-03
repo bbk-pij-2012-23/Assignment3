@@ -134,6 +134,8 @@ public class ContactManagerImplTest {
 
 	@Test
 	public void testAddMeetingNotes() {
+		//add testpastmeeting
+		//assertEquals("notes", testPastMeeting.getNotes());
 		fail("Not yet implemented");
 	}
 
