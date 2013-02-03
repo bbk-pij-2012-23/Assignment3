@@ -1,5 +1,8 @@
 package assignment3;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -56,21 +59,30 @@ public class ContactManagerImpl implements ContactManager {
 		int meetingId = 0;
 		if (getMeetingList() == null){
 			meetingId = 1;
+			List<Meeting> meetingList = new LinkedList<Meeting>(); //this seems a bit sloppy, since we need a meeting list from the start
+			setMeetingList(meetingList);
 		}
 		else{
 			meetingId = getMeetingList().size() +1;
 		}
 		Meeting meeting = new MeetingImpl(date, meetingId, contacts);
 		meetingList.add(meeting);
+		String record = meeting.toString();
+		System.out.println(record);
+		try{
+
+			File data = new File("meeting.rtf");
+			FileWriter fw = new FileWriter(data, true);
+			fw.write(record);
+			fw.close();
+		}catch(IOException ex){
+			ex.printStackTrace();
+		}	
 		return meetingId;
 	}
 
 	/**
 	*Returns the PAST meeting with the requested ID, or null if it there is none.
-	* does this by checking all meetings for id - if none returns null, 
-	* if meeting exists then tries to get meeting from pastMeetingList, and catches exception if 
-	* not there (i.e. has not passed yet (meetings are updated on opening). 
-	* Version 2 would have a better update method (if left open for a long time, meetings might pass without being updated
 	* 
 	* @param id the ID for the meeting
 	* @return the meeting with the requested ID, or null if it there is none.
@@ -78,20 +90,13 @@ public class ContactManagerImpl implements ContactManager {
 	*/
 	@Override	
 	public PastMeeting getPastMeeting(int id) {
-		//look up meeting in pastMeetingList
 		PastMeeting meeting = null;
-		if(getMeeting(id) == null){ //no meeting with that id;
-			return meeting;
+		try{
+			meeting = (PastMeeting) getPastMeetingList().get(id -1);
+		}catch(IllegalArgumentException ex){
+			ex.printStackTrace();
 		}
-		else{
-			try{
-				meeting = getPastMeetingList().get(id);
-			}catch (IllegalArgumentException ex){
-				ex.printStackTrace();
-				System.out.println("This meeting has not happened yet");
-			}
-		}	
-		return meeting;  //this will need to be formated somehow;
+		return meeting;
 	}
 	/**
 	* Returns the FUTURE meeting with the requested ID, or null if there is none.
@@ -133,7 +138,8 @@ public class ContactManagerImpl implements ContactManager {
 	@Override
 	public List<Meeting> getFutureMeetingList(Contact contact) {
 		//create a list(or some data structure) containing a subset of meetingList (where date  has not passed)
-		List<Meeting> futureMeetingList = new LinkedList<Meeting>(); //change this when futureMeetingList has something to point at
+		List<Meeting> futureMeetingList = new LinkedList<Meeting>();
+		//change this when futureMeetingList has something to point at
 		return futureMeetingList; //may have to create a field in the end but not for now...
 	}
 
@@ -187,9 +193,21 @@ public class ContactManagerImpl implements ContactManager {
 		else{
 			id = allContacts.size() + 1;
 		}
-//		try{
+		try{
 			Contact newContact = new ContactImpl(name, id);
+			newContact.addNotes(notes);
 			allContacts.add(newContact);
+			String record = newContact.toString();
+			File data = new File("contacts.rtf");
+			FileWriter fw = new FileWriter(data, true);
+			fw.write(record);
+			fw.close();
+		}catch(IOException ex){
+			ex.printStackTrace();
+		}catch(NullPointerException ex){
+			ex.printStackTrace();
+		}
+			
 //		}catch(NullPointerException ex){
 //			ex.printStackTrace();
 			//how do I distinguish between two sources of NullPointerException?
@@ -246,6 +264,7 @@ public class ContactManagerImpl implements ContactManager {
 	private void launch(){
 		Set<Contact> allContacts = new HashSet<Contact>();
 		this.setAllContacts(allContacts);
+		System.out.println("hello world");
 		
 		//create a meeting list also
 	}

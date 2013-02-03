@@ -1,5 +1,8 @@
 package assignment3;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -24,10 +27,9 @@ public class ScratchPad {
 		return meetings;
 	}
 	
-	public List<PastMeeting> getPastMeetings(){
-		
-		return meetings;
-	}
+//	public List<PastMeeting> getPastMeetings(){
+//		return meetings;
+//	}
 	public void dateFinder(){
 		Calendar date = new GregorianCalendar(2013, 0, 21);
 		System.out.println("Today's date is " +  date.get(Calendar.DAY_OF_MONTH) + "/" + 
@@ -194,7 +196,19 @@ public class ScratchPad {
 		
 		System.out.println("today is " + cal.getTime().toString());
 		
+		Contact bob = new ContactImpl("bob",1);
+		bob.addNotes("notes");
+		String record = bob.toString();
 		
+		
+		File data = new File("test.txt");
+		try{
+			FileWriter fw = new FileWriter(data, true);
+			fw.write(record);
+			fw.close();
+		}catch(IOException ex){
+			ex.printStackTrace();
+		}
 		
 		
 		

@@ -22,7 +22,8 @@ import assignment3.PastMeeting;
 
 public class ContactManagerImplTest {
 	 Meeting testMeeting;
-	 ContactManagerImpl testContactManager;
+	 ContactManagerImpl testContactManager = new ContactManagerImpl();
+	 
 	@Before
 	public void setUp() throws Exception {
 		Calendar date = new GregorianCalendar(2013,01,03,15,30);
@@ -32,7 +33,7 @@ public class ContactManagerImplTest {
 		contacts.add(bob);
 		contacts.add(sally);
 		testMeeting = new MeetingImpl(date, 1, contacts);
-		testContactManager = new ContactManagerImpl();
+		//testContactManager = new ContactManagerImpl();
 	}
 
 	@After
@@ -67,10 +68,9 @@ public class ContactManagerImplTest {
 		Set<Contact> newContacts = new HashSet<Contact>();
 		newContacts.addAll(testMeeting.getContacts());
 		testContactManager.addFutureMeeting(newContacts,newDate);
+		testContactManager.addFutureMeeting(newContacts,newDate);
 		List<Meeting> meetingList = testContactManager.getMeetingList();
 		assertEquals(2, meetingList.size());
-		//check added to ContactManagerImpl's meetingList field
-		fail("Not yet implemented");
 	}
 	
 	@Test
@@ -141,7 +141,11 @@ public class ContactManagerImplTest {
 
 	@Test
 	public void testAddNewContact() {
-		fail("Not yet implemented");
+		ContactManagerImpl tester = new ContactManagerImpl();
+		String name = "ellie";
+		String notes = "some notes about ellie";
+		tester.addNewContact(name, notes);
+		assertEquals(1,tester.getAllContacts().size());
 	}
 
 	@Test

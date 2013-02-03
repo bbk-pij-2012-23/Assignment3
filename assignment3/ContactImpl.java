@@ -10,11 +10,16 @@ public class ContactImpl implements Contact {
 		this.id = id;
 	}
 	
-
+	public void setId(int id){ //not needed using current implementation but i think it will using xml
+		this.id = id;
+	}
 	public int getId() {
 		return id;
 	}
 
+	public void setName(String name){ //as above
+		this.name = name;
+	}
 	
 	public String getName() {
 		return name;
@@ -25,9 +30,13 @@ public class ContactImpl implements Contact {
 		return note;
 	}
 
-
 	public void addNotes(String note) {
 		this.note = note;
 	}
+	
+	 @Override
+	  public String toString() {
+		 return "Contact id: " + id + "\rname: " + name + "\rnotes: " + note + "\r\r";
+	  }
 
 }

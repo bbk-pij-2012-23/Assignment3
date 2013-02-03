@@ -1,6 +1,9 @@
 package assignment3;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 public class MeetingImpl implements Meeting {
@@ -31,6 +34,10 @@ public class MeetingImpl implements Meeting {
 
 	public Set<Contact> getContacts() {
 		return contacts;
+	}
+	@Override
+	public String toString(){
+		return "Meeting id: " + id + "\rDate: " + date.getTime().toString() + "\rContacts:" + contacts + "\r\r";
 	}
 
 }
