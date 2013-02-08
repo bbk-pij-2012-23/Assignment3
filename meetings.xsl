@@ -7,12 +7,12 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<html>     
 		<body>
 			<h2>Meeting List</h2>
-			<xsl:for-each select="meeting-list/meeting">     
+			<xsl:for-each select="meetings-list/meeting">     
 			<p>
-				<xsl:if test="future-meeting">
+<!--				<xsl:if test="future-meeting">
 					<b><xsl:value-of select="future-meeting"/></b><br />
 				</xsl:if>	
-				Meeting date: <xsl:value-of select="date"/><br />
+-->				Meeting date: <xsl:value-of select="date"/><br />
 				ID: <xsl:value-of select="id"/><br />
 				Attendees: <xsl:for-each select="contact"> 
 					<xsl:value-of select="."/> <br />

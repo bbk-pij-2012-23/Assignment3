@@ -197,11 +197,18 @@ public class ContactManagerImplTest {
 	public void testMakeMeetingsXMLFileCreated() throws Exception{
 		testAddFutureMeetingNotEmptyList();
 		System.out.println(testContactManager.getMeetingList().toString());
-		assertEquals("testmeetings", testContactManager.makeContactsXMLFile("testmeetings")); 
+		assertEquals("testmeetings", testContactManager.makeMeetingsXMLFile("testmeetings")); 
 	}
 	
+	@Test
+	public void testXSLToSet() throws Exception {
+		assertNotNull(testContactManager.importContacts());
+	}
 	
-	
+	@Test
+	public void testXSLToList() throws Exception {
+		assertNotNull(testContactManager.importMeetings());
+	}
 	
 	@Test
 	public void testSpecialCharactersInString(){

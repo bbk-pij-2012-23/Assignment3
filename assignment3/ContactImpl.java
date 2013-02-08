@@ -9,7 +9,12 @@ public class ContactImpl implements Contact {
 		this.name = name;
 		this.id = id;
 	}
-	
+	/*temporary constructor for making Contact sets for individual meetings - update when resolved.
+	 * */
+	public ContactImpl(String data) {
+		this.name = name;
+	}
+
 	public void setId(int id){ //not needed using current implementation but i think it will using xml
 		this.id = id;
 	}

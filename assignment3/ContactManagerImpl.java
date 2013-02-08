@@ -81,17 +81,7 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		Meeting meeting = new MeetingImpl(date, meetingId, contacts);
 		meetingList.add(meeting);
-		String record = meeting.toString();
-		System.out.println(record);
-		try{
-
-			File data = new File("meeting.rtf");
-			FileWriter fw = new FileWriter(data, true);
-			fw.write(record);
-			fw.close();
-		}catch(IOException ex){
-			ex.printStackTrace();
-		}	
+		System.out.println(meeting.toString());
 		return meetingId;
 	}
 
@@ -252,7 +242,8 @@ public class ContactManagerImpl implements ContactManager {
 		XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 		XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(output);
 		String rootElement = "contacts-list";
-		xml.createSkeleton(eventWriter, rootElement);
+		String xslRef = "contacts.xsl";
+		xml.createSkeleton(eventWriter, xslRef, rootElement);
 		XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 		XMLEvent newLine = eventFactory.createDTD("\n"); //adds the new line after the non-#PCDATA elements
 		/*
@@ -290,7 +281,8 @@ public class ContactManagerImpl implements ContactManager {
 		XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 		XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(output);
 		String rootElement = "meetings-list";
-		xml.createSkeleton(eventWriter, rootElement);
+		String xslRef = "meetings.xsl";
+		xml.createSkeleton(eventWriter, xslRef, rootElement);
 		XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 		XMLEvent newLine = eventFactory.createDTD("\n"); //adds the new line after the non-#PCDATA elements
 		/*
@@ -305,13 +297,13 @@ public class ContactManagerImpl implements ContactManager {
 			eventWriter.add(newLine);
 			Meeting meeting = it.next();
 			xml.createElement(eventWriter, "id", Integer.toString(meeting.getId()));
-		    xml.createElement(eventWriter, "date", meeting.getDate().toString());
+		    xml.createElement(eventWriter, "date", meeting.getDate().getTime().toString());
 		    Iterator<Contact> it1 = meeting.getContacts().iterator();
 		    while(it1.hasNext()){
 		    	Contact person = it1.next();
 		    	xml.createElement(eventWriter, "contact", person.getName());
 		    }
-		    //xml.createElement(eventWriter, "note", meeting.getNotes()); //only past meeting
+		    //xml.createElement(eventWriter, "note", pastMeeting.getNotes()); //only past meeting
 			EndElement endElement = eventFactory.createEndElement("", "", "meeting");
 			eventWriter.add(endElement);
 			eventWriter.add(newLine);
@@ -325,6 +317,17 @@ public class ContactManagerImpl implements ContactManager {
 		
 	}
 	
+	public Set<Contact> importContacts() throws Exception{
+		ListMaker run = new ListMaker();
+		setAllContacts(run.xmlToSet("contacts.xml"));
+		return allContacts;
+	}
+	
+	public List<Meeting> importMeetings() throws Exception{
+		ListMaker run = new ListMaker();
+		setMeetingList(run.xmlToList("meetings.xml"));
+		return meetingList;
+	}
 	/* on opening or closing */
 	
 	public void updateMeetingList(){ //to be run on opening

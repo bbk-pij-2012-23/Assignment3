@@ -3,12 +3,19 @@ package assignment3;
 //Draws heavily on the tutorial by Lars Vogel (http://www.vogella.com/articles/JavaXML/article.html)
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileInputStream;
+
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Properties;
+import java.io.InputStream;
+import java.util.Set;
+import java.util.HashSet;
+
 
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Characters;
@@ -19,6 +26,10 @@ import javax.xml.stream.events.XMLEvent;
 
 public class XMLMaker {
 	private String contactsFile;
+	private static String CONTACT = "contact";
+	private static String ID = "id";
+	private static String NAME = "name";
+	
 	
 	public XMLMaker() {
 		// TODO Auto-generated constructor stub
@@ -32,7 +43,7 @@ public class XMLMaker {
 		return contactsFile;
 	}
 	
-	public void createSkeleton(XMLEventWriter eventWriter, String rootElement)  {
+	public void createSkeleton(XMLEventWriter eventWriter, String xslRef, String rootElement)  {
 		try{
 			XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 			XMLEvent newLine = eventFactory.createDTD("\n"); //for formating
@@ -40,7 +51,7 @@ public class XMLMaker {
 			StartDocument startDocument = eventFactory.createStartDocument();
 			eventWriter.add(startDocument);
 			eventWriter.add(newLine);
-			XMLEvent stylesheet = eventFactory.createDTD("<?xml-stylesheet type=\"text/xsl\" href=\"contacts.xsl\"?>");
+			XMLEvent stylesheet = eventFactory.createDTD("<?xml-stylesheet type=\"text/xsl\" href=\"" + xslRef + "\"?>");
 			eventWriter.add(stylesheet);
 			StartElement element = eventFactory.createStartElement("","",rootElement);
 			eventWriter.add(element);
@@ -54,7 +65,7 @@ public class XMLMaker {
 	
 	//handle exceptions properly
 	//really should be able to encapsulate more than this. maybe for v2 now.
-	public void createElement(XMLEventWriter eventWriter, String elementLabel, String elementValue) throws Exception{
+	public void createElement(XMLEventWriter eventWriter, String elementLabel, String elementValue) throws Exception {
 		XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 		XMLEvent newLine = eventFactory.createDTD("\n"); //for formating
 		XMLEvent tab = eventFactory.createDTD("\t");//for formating xml
@@ -66,5 +77,9 @@ public class XMLMaker {
 		EndElement endElement = eventFactory.createEndElement("", "", elementLabel);
 		eventWriter.add(endElement);
 		eventWriter.add(newLine);
-	}
+	}	
+		
+		
+
+	
 }
