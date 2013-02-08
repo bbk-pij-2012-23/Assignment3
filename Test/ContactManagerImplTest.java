@@ -101,8 +101,9 @@ public class ContactManagerImplTest {
 	@Test
 	public void testGetFutureMeetingListContact() {
 		//tests whether a list of meetings returned but not whether correct ones
-		//assertNotNull(testContactManager.getFutureMeetingList(sally));
-		fail("Not yet implemented");
+		Contact sally = new ContactImpl("sally", 2);
+		testAddFutureMeetingNotEmptyList();
+		assertNotNull(testContactManager.getFutureMeetingList(sally));
 	}
 
 	@Test

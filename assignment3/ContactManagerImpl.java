@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -138,12 +139,31 @@ public class ContactManagerImpl implements ContactManager {
 		return meeting;
 		
 	}
-
+	
+	/**
+	* Returns the list of future meetings scheduled with this contact.
+	*
+	* If there are none, the returned list will be empty. Otherwise,
+	* the list will be chronologically sorted and will not contain any
+	* duplicates.
+	*
+	* @param contact one of the user’s contacts
+	* @return the list of future meeting(s) scheduled with this contact (maybe empty).
+	* @throws IllegalArgumentException if the contact does not exist
+	*/
 	@Override
 	public List<Meeting> getFutureMeetingList(Contact contact) {
-		//create a list(or some data structure) containing a subset of meetingList (where date  has not passed)
-		List<Meeting> futureMeetingList = new LinkedList<Meeting>();
-		//change this when futureMeetingList has something to point at
+		List<Meeting> futureMeetingList = new ArrayList<Meeting>();
+		Iterator<Meeting> it = getMeetingList().iterator();
+		while (it.hasNext()){
+			Set<Contact> temp = it.next().getContacts();
+			Iterator<Contact> tempit = temp.iterator();
+			while(tempit.hasNext()){
+				if(tempit.next() == contact){
+					futureMeetingList.add(it.next());
+				}
+			}
+		}
 		return futureMeetingList; //may have to create a field in the end but not for now...
 	}
 
