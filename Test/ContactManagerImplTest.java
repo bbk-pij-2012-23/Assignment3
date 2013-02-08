@@ -100,18 +100,30 @@ public class ContactManagerImplTest {
 
 	@Test
 	public void testGetFutureMeetingListContact() {
-		//tests whether a list of meetings returned but not whether correct ones
+		//tests whether a list of meetings returned but not whether unique or corrected ordered. Method doesn't do that yet anyway
 		Contact sally = new ContactImpl("sally", 2);
-		testAddFutureMeetingNotEmptyList();
-		assertNotNull(testContactManager.getFutureMeetingList(sally));
+		Calendar newDate = new GregorianCalendar(2013,03,03,10,00);
+		Set<Contact> newContacts = new HashSet<Contact>();
+		newContacts.add(sally);
+		testContactManager.addFutureMeeting(newContacts,newDate);
+		testContactManager.addFutureMeeting(newContacts,newDate);
+		List<Meeting> futureMeetingList = testContactManager.getFutureMeetingList(sally);
+		System.out.println("Meetings with sally: " + futureMeetingList.size());
+		assertEquals("2", futureMeetingList.size());
 	}
 
 	@Test
 	public void testGetFutureMeetingListCalendar() {
 		//tests whether a list of meetings returned but not whether correct ones
-		//Calendar cal = new GregorianCalendar(2013,03,03,10,00);
-		//assertNotNull(testContactManager.getFutureMeetingList(cal));
-		fail("Not yet implemented");
+		Contact sally = new ContactImpl("sally", 2);
+		Calendar newDate = new GregorianCalendar(2013,03,03,10,00);
+		Set<Contact> newContacts = new HashSet<Contact>();
+		newContacts.add(sally);
+		testContactManager.addFutureMeeting(newContacts,newDate);
+		testContactManager.addFutureMeeting(newContacts,newDate);
+		List<Meeting> futureMeetingList = testContactManager.getFutureMeetingList(newDate);
+		System.out.println("meetings on 3rd April: " + futureMeetingList.size());
+		assertEquals("2", futureMeetingList.size());
 	}
 
 	@Test
@@ -188,7 +200,7 @@ public class ContactManagerImplTest {
 	@Test
 	public void testMakeContactsXMLFileCreated() throws Exception{
 		testAddNewContact();
-		System.out.println(testContactManager.getAllContacts().toString());
+		//System.out.println(testContactManager.getAllContacts().toString());
 		assertEquals("testcontacts", testContactManager.makeContactsXMLFile("testcontacts")); 
 	}
 	
@@ -197,7 +209,7 @@ public class ContactManagerImplTest {
 	@Test
 	public void testMakeMeetingsXMLFileCreated() throws Exception{
 		testAddFutureMeetingNotEmptyList();
-		System.out.println(testContactManager.getMeetingList().toString());
+		//System.out.println(testContactManager.getMeetingList().toString());
 		assertEquals("testmeetings", testContactManager.makeMeetingsXMLFile("testmeetings")); 
 	}
 	

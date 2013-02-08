@@ -164,6 +164,7 @@ public class ContactManagerImpl implements ContactManager {
 				}
 			}
 		}
+		//System.out.println(futureMeetingList.toString());
 		return futureMeetingList; //may have to create a field in the end but not for now...
 	}
 
@@ -171,6 +172,7 @@ public class ContactManagerImpl implements ContactManager {
 	public List<Meeting> getFutureMeetingList(Calendar date) {
 		//create a list(or some data structure) containing a subset of meetingList (where date  has not passed)
 		List<Meeting> futureMeetingList = new LinkedList<Meeting>(); //change this when futureMeetingList has something to point at
+		//System.out.println(futureMeetingList.toString());
 		return futureMeetingList;
 	}
 
