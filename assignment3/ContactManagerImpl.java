@@ -1,13 +1,27 @@
 package assignment3;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartDocument;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+
+
 
 public class ContactManagerImpl implements ContactManager {
 	private List<Meeting> meetingList;
@@ -197,23 +211,14 @@ public class ContactManagerImpl implements ContactManager {
 			Contact newContact = new ContactImpl(name, id);
 			newContact.addNotes(notes);
 			allContacts.add(newContact);
-			String record = newContact.toString();
-			File data = new File("contacts.rtf");
-			FileWriter fw = new FileWriter(data, true);
-			fw.write(record);
-			fw.close();
-		}catch(IOException ex){
-			ex.printStackTrace();
+			System.out.println("Contact "+ newContact.getName() + " has been added to your contacts list");
 		}catch(NullPointerException ex){
 			ex.printStackTrace();
+		}catch (Exception e) { //sort this out when handled exceptions properly in XMLMaker
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-			
-//		}catch(NullPointerException ex){
-//			ex.printStackTrace();
-			//how do I distinguish between two sources of NullPointerException?
-			// if null notes continue, else if (!notes.equals("")){newContact.addNotes(notes);}
-			//if null name prompt for a name;
-	
+		
 	}		//to add "successful completion" user feedback
 	
 
@@ -236,6 +241,88 @@ public class ContactManagerImpl implements ContactManager {
 		//procedure to look up the string in allContacts
 		//what about regex?
 		return names;
+	}
+	
+	//to be run on exit
+	//this is high dependency, not a good implementation
+	public String makeContactsXMLFile(String fileName) throws Exception { //change this to try/catches later
+		XMLMaker xml = new XMLMaker();
+		xml.setFile(fileName + ".xml");
+		OutputStream output = new FileOutputStream(xml.getFile());
+		XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+		XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(output);
+		String rootElement = "contacts-list";
+		xml.createSkeleton(eventWriter, rootElement);
+		XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+		XMLEvent newLine = eventFactory.createDTD("\n"); //adds the new line after the non-#PCDATA elements
+		/*
+		StartDocument startDocument = eventFactory.createStartDocument();
+		eventWriter.add(startDocument);
+		*/
+		
+		Iterator<Contact> it = getAllContacts().iterator(); //I know allContacts can be seen but Keith says using the getter as standard is good practice
+		while (it.hasNext()){
+			StartElement startElement = eventFactory.createStartElement("", "", "contact");
+			eventWriter.add(startElement);
+			eventWriter.add(newLine);
+			Contact person = it.next();
+			xml.createElement(eventWriter, "id", Integer.toString(person.getId()));
+		    xml.createElement(eventWriter, "name", person.getName());
+		    xml.createElement(eventWriter, "note", person.getNotes());
+			EndElement endElement = eventFactory.createEndElement("", "", "contact");
+			eventWriter.add(endElement);
+			eventWriter.add(newLine);
+		}
+		EndElement endElement = eventFactory.createEndElement("", "", rootElement);
+		eventWriter.add(endElement);
+		eventWriter.add(newLine);
+		eventWriter.add(eventFactory.createEndDocument());
+		eventWriter.close();	
+		return fileName;
+		
+	}
+	
+	//get rid of this repeated code
+	public String makeMeetingsXMLFile(String fileName) throws Exception { //change this to try/catches later
+		XMLMaker xml = new XMLMaker();
+		xml.setFile(fileName + ".xml");
+		OutputStream output = new FileOutputStream(xml.getFile());
+		XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+		XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(output);
+		String rootElement = "meetings-list";
+		xml.createSkeleton(eventWriter, rootElement);
+		XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+		XMLEvent newLine = eventFactory.createDTD("\n"); //adds the new line after the non-#PCDATA elements
+		/*
+		StartDocument startDocument = eventFactory.createStartDocument();
+		eventWriter.add(startDocument);
+		*/
+		
+		Iterator<Meeting> it = getMeetingList().iterator(); //I know allContacts can be seen but Keith says using the getter as standard is good practice
+		while (it.hasNext()){
+			StartElement startElement = eventFactory.createStartElement("", "", "meeting");
+			eventWriter.add(startElement);
+			eventWriter.add(newLine);
+			Meeting meeting = it.next();
+			xml.createElement(eventWriter, "id", Integer.toString(meeting.getId()));
+		    xml.createElement(eventWriter, "date", meeting.getDate().toString());
+		    Iterator<Contact> it1 = meeting.getContacts().iterator();
+		    while(it1.hasNext()){
+		    	Contact person = it1.next();
+		    	xml.createElement(eventWriter, "contact", person.getName());
+		    }
+		    //xml.createElement(eventWriter, "note", meeting.getNotes()); //only past meeting
+			EndElement endElement = eventFactory.createEndElement("", "", "meeting");
+			eventWriter.add(endElement);
+			eventWriter.add(newLine);
+		}
+		EndElement endElement = eventFactory.createEndElement("", "", rootElement);
+		eventWriter.add(endElement);
+		eventWriter.add(newLine);
+		eventWriter.add(eventFactory.createEndDocument());
+		eventWriter.close();	
+		return fileName;
+		
 	}
 	
 	/* on opening or closing */
@@ -262,18 +349,22 @@ public class ContactManagerImpl implements ContactManager {
 	}
 
 	private void launch(){
+		//create a Set<Contact> from contacts.xml and List<Meeting> from meetings.xml
+		
 		Set<Contact> allContacts = new HashSet<Contact>();
 		this.setAllContacts(allContacts);
 		System.out.println("hello world");
 		
 		//create a meeting list also
 	}
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		ContactManagerImpl run = new ContactManagerImpl();
 		run.launch();
+		
 	}
 
 }

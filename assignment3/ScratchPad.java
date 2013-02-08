@@ -182,7 +182,9 @@ public class ScratchPad {
 	 */
 	public static void main(String[] args) {
 		ScratchPad run = new ScratchPad();
-	/*	run.dateFinder();
+	
+		System.out.println("<?xml-stylesheet type="text/xsl" href="meetings.xsl"?>");
+		/*	run.dateFinder();
 		System.out.println(run.varargs(43,6,5,43));
 		
 		//run.tryAddContact();*/

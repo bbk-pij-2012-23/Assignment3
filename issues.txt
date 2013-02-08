@@ -12,3 +12,4 @@ issues to address:
 9. having some problems with casting and inheritance - need to read up on that again
 10. need more info about exception handling - having problems sepcifying conditions when to throw exceptions when they don't crash out
 
+ln 59 creating meeting list if list is null is a bit badly designed - we know a list is needed, so it should have been created already

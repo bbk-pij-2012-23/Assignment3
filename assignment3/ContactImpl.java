@@ -38,5 +38,5 @@ public class ContactImpl implements Contact {
 	  public String toString() {
 		 return "Contact id: " + id + "\rname: " + name + "\rnotes: " + note + "\r\r";
 	  }
-
+	 
 }

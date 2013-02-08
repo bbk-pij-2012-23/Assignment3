@@ -141,11 +141,14 @@ public class ContactManagerImplTest {
 
 	@Test
 	public void testAddNewContact() {
-		ContactManagerImpl tester = new ContactManagerImpl();
+		//ContactManagerImpl tester = new ContactManagerImpl();
 		String name = "ellie";
 		String notes = "some notes about ellie";
-		tester.addNewContact(name, notes);
-		assertEquals(1,tester.getAllContacts().size());
+		testContactManager.addNewContact(name, notes);
+		String anothername = "chris";
+		String othernotes = "stuff about chris";
+		testContactManager.addNewContact(anothername, othernotes);
+		assertEquals(2,testContactManager.getAllContacts().size());
 	}
 
 	@Test
@@ -178,6 +181,32 @@ public class ContactManagerImplTest {
 		List<PastMeeting> pastMeetingList = testContactManager.getPastMeetingList();
 		assertEquals(1, pastMeetingList.size());
 		//fail("Not yet implemented");
+	}
+	
+	//this is a rubbish test, it only checks whether filename assigned. 
+	@Test
+	public void testMakeContactsXMLFileCreated() throws Exception{
+		testAddNewContact();
+		System.out.println(testContactManager.getAllContacts().toString());
+		assertEquals("testcontacts", testContactManager.makeContactsXMLFile("testcontacts")); 
+	}
+	
+	
+	// I think this fails because of my confusion re inheritance. think it uses futuremeeting not meeting
+	@Test
+	public void testMakeMeetingsXMLFileCreated() throws Exception{
+		testAddFutureMeetingNotEmptyList();
+		System.out.println(testContactManager.getMeetingList().toString());
+		assertEquals("testmeetings", testContactManager.makeContactsXMLFile("testmeetings")); 
+	}
+	
+	
+	
+	
+	@Test
+	public void testSpecialCharactersInString(){
+		String expression = "<?xml-stylesheet type=\"text/xsl\" href=\"contacts.xsl\"?>"; //couldn't work out how to create a parser, so using this work around
+		System.out.println(expression);
 	}
 	
 	@Test
