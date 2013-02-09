@@ -101,11 +101,11 @@ public class ContactManagerImpl implements ContactManager {
 	public PastMeeting getPastMeeting(int id) {
 		PastMeeting meeting = null;
 		try{
-			if(pastMeetingList == null){
+			if(meetingList == null){
 				return meeting;
 			}
 			else{
-				meeting = getPastMeetingList().get(id -1);
+				meeting = (PastMeeting) getMeetingList().get(id -1);
 			}	
 		}catch(IllegalArgumentException ex){
 			ex.printStackTrace();

@@ -80,12 +80,11 @@ public class ContactManagerImplTest {
 		assertEquals(2, meetingList.size());
 	}
 	
+	/*passes*/
 	@Test
 	public void testGetPastMeeting(){
-		//throw exception if pastmeeting not found (i.e in the future; assuming other test correctly gathers null ids)
-		//return a meeting
-		//return correct pastmeeting to getmeeting
-		fail("Not yet implemented");
+		testAddNewPastMeeting();
+		assertEquals(1,testContactManager.getPastMeeting(1).getId());
 	}
 
 	/*passes*/
@@ -251,5 +250,6 @@ public class ContactManagerImplTest {
 	public void testMain() {
 		fail("Not yet implemented");
 	}
-
+	
+	
 }
