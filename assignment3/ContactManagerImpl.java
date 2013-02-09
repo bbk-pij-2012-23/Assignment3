@@ -21,7 +21,7 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-
+//on the test branch
 public class ContactManagerImpl implements ContactManager {
 	private List<Meeting> meetingList;
 	private List<PastMeeting> pastMeetingList; 
@@ -100,17 +100,18 @@ public class ContactManagerImpl implements ContactManager {
 	@Override	
 	public PastMeeting getPastMeeting(int id) {
 		PastMeeting meeting = null;
-		try{
-			if(meetingList == null){
-				return meeting;
+		if(meetingList == null){
+			return meeting;
+		}
+		else{
+			meeting = (PastMeeting) getMeetingList().get(id -1);
+			if(meeting.getDate().after(Calendar.getInstance())){
+				throw new IllegalArgumentException("this meeting hasn't happened yet");
 			}
 			else{
-				meeting = (PastMeeting) getMeetingList().get(id -1);
-			}	
-		}catch(IllegalArgumentException ex){
-			ex.printStackTrace();
+				return meeting;
+			}
 		}
-		return meeting;
 	}
 	/**
 	* Returns the FUTURE meeting with the requested ID, or null if there is none.
@@ -122,12 +123,18 @@ public class ContactManagerImpl implements ContactManager {
 	@Override
 	public FutureMeeting getFutureMeeting(int id) {
 		FutureMeeting meeting = null;
-		try{
-			meeting = (FutureMeeting) getMeetingList().get(id -1);
-		}catch(IllegalArgumentException ex){
-			ex.printStackTrace();
+		if(meetingList == null){
+			return meeting;
 		}
-		return meeting;
+		else{
+			meeting = (FutureMeeting) getMeetingList().get(id -1);
+			if(meeting.getDate().before(Calendar.getInstance())){
+				throw new IllegalArgumentException("this meeting has already happened");
+			}
+			else{
+				return meeting;
+			}
+		}
 	}
 
 	@Override

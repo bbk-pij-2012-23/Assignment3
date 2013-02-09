@@ -28,7 +28,7 @@ public class ContactManagerImplTest {
 	 
 	@Before
 	public void setUp() throws Exception {
-		Calendar date = new GregorianCalendar(2013,01,03,15,30);
+		Calendar date = new GregorianCalendar(2013,06,03,15,30);
 		Set<Contact> contacts = new HashSet<Contact>();
 		Contact bob = new ContactImpl("bob", 1);
 		Contact sally = new ContactImpl("sally", 2);
@@ -69,6 +69,16 @@ public class ContactManagerImplTest {
 	}
 	
 	/*passes*/
+	@Test
+	public void testAddFutureMeetingPastDate() {
+		//check added to ContactManagerImpl's meetingList field when empty
+		Set<Contact> contacts = testMeeting.getContacts();
+		Calendar date = new GregorianCalendar(2012,02,02,10,10);
+		testContactManager.addFutureMeeting(contacts, date);
+		assertNotNull(testContactManager.getMeetingList());
+	}
+	
+	/*passes*/
 	@Test 
 	public void testAddFutureMeetingNotEmptyList() {
 		Calendar newDate = new GregorianCalendar(2013,03,03,10,00);
@@ -88,20 +98,42 @@ public class ContactManagerImplTest {
 	}
 
 	/*passes*/
+	@Test(expected= IllegalArgumentException.class)
+	public void testGetPastMeetingWithFutureDate(){
+		testAddNewPastMeetingWithFutureDate();
+		testContactManager.getPastMeeting(1).getId();
+	}
+	
+	/*passes*/
+	@Test(expected= IllegalArgumentException.class)
+	public void testGetFutureMeetingWithPastDate() {
+		testAddFutureMeetingPastDate();
+		testContactManager.getFutureMeeting(1).getId();
+	}
+	
+	/*passes*/
 	@Test
-	public void testGetFutureMeeting() {
-		testAddFutureMeetingNotEmptyList();
+	public void testGetFutureMeeting(){
+		testAddFutureMeetingEmptyList();
+		assertEquals(1,testContactManager.getFutureMeeting(1).getId());
+	}
+	
+	/*passes*/
+	@Test
+	public void testGetMeetingWithFutureDate() {
+		testAddFutureMeetingEmptyList();
 		Meeting test = testContactManager.getMeeting(1);
 		assertEquals(1,test.getId());
 	}
 
+	/*passes*/
 	@Test
-	public void testGetMeeting() {
-		testAddFutureMeetingNotEmptyList();
+	public void testGetMeetingWithPastDate() {
+		testAddNewPastMeeting();
 		Meeting test = testContactManager.getMeeting(1);
 		assertEquals(1,test.getId());
 	}
-
+	
 	/*FAILS*/
 	@Test
 	public void testGetFutureMeetingListContact() {
@@ -139,12 +171,23 @@ public class ContactManagerImplTest {
 		fail("Not yet implemented");
 	}
 
-	/*FAILS - method not written yet*/
+	/*passes*/
 	@Test
 	public void testAddNewPastMeeting() {
 		//check that id matches the expect id (i.e. number of meetings in list)
 		Set<Contact> contacts = testMeeting.getContacts();
-		Calendar date = testMeeting.getDate();
+		Calendar date = new GregorianCalendar(2012,02,02,02,02,02);
+		testContactManager.addNewPastMeeting(contacts, date, "text");
+		assertNotNull(testContactManager.getMeetingList());
+		//fail("Not yet implemented");
+	}
+	
+	/*passes*/
+	@Test
+	public void testAddNewPastMeetingWithFutureDate() {
+		//check that id matches the expect id (i.e. number of meetings in list)
+		Set<Contact> contacts = testMeeting.getContacts();
+		Calendar date = new GregorianCalendar(2013,06,30,10,00);
 		testContactManager.addNewPastMeeting(contacts, date, "text");
 		assertNotNull(testContactManager.getMeetingList());
 		//fail("Not yet implemented");
