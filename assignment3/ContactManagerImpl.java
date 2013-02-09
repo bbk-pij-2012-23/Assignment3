@@ -22,15 +22,12 @@ import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-
-
 public class ContactManagerImpl implements ContactManager {
 	private List<Meeting> meetingList;
 	private List<PastMeeting> pastMeetingList; 
 	private Set<Contact> allContacts;
 	
-	
-	
+		
 	public ContactManagerImpl() {
 	}
 	
@@ -42,6 +39,10 @@ public class ContactManagerImpl implements ContactManager {
 		this.meetingList = meetingList;
 	}
 	
+	/**
+	 * 
+	 * @param pastMeetingList
+	 */
 	public void setPastMeetingList(List<PastMeeting> pastMeetingList){
 		this.pastMeetingList = pastMeetingList;
 	}
@@ -54,7 +55,10 @@ public class ContactManagerImpl implements ContactManager {
 		this.allContacts = allContacts;
 	}
 	
-	
+	/**
+	 * 
+	 * @return allContacts
+	 */
 	public Set<Contact> getAllContacts() {
 	 	return allContacts;
 	}
@@ -80,7 +84,7 @@ public class ContactManagerImpl implements ContactManager {
 		else{
 			meetingId = getMeetingList().size() +1;
 		}
-		Meeting meeting = new MeetingImpl(date, meetingId, contacts);
+		Meeting meeting = new FutureMeetingImpl(date, meetingId, contacts);
 		meetingList.add(meeting);
 		System.out.println(meeting.toString());
 		return meetingId;
@@ -97,7 +101,12 @@ public class ContactManagerImpl implements ContactManager {
 	public PastMeeting getPastMeeting(int id) {
 		PastMeeting meeting = null;
 		try{
-			meeting = (PastMeeting) getPastMeetingList().get(id -1);
+			if(pastMeetingList == null){
+				return meeting;
+			}
+			else{
+				meeting = getPastMeetingList().get(id -1);
+			}	
 		}catch(IllegalArgumentException ex){
 			ex.printStackTrace();
 		}
@@ -130,10 +139,10 @@ public class ContactManagerImpl implements ContactManager {
 			return meeting;
 		}
 		else if (getMeetingList().get(id-1).getDate().before(Calendar.getInstance())){
-			meeting = (Meeting) getPastMeeting(id);
+			meeting = getPastMeeting(id);
 		}
 		else{
-			meeting = (Meeting) getFutureMeeting(id);
+			meeting = getFutureMeeting(id);
 		}
 		
 		return meeting;
@@ -187,19 +196,27 @@ public class ContactManagerImpl implements ContactManager {
 	public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) {
 		// add to meetingList 
 		//find id by size of list
-		int id = meetingList.size()+1;
-		Meeting meeting = new MeetingImpl(date, id, contacts);
+		int id = 0;
+		if(getMeetingList()==null){
+			List<Meeting> meetingList = new LinkedList<Meeting>();
+			setMeetingList(meetingList);
+			id = 1;
+		}
+		else{
+			id = getMeetingList().size()+1;
+		}
+		Meeting meeting = new PastMeetingImpl(date, id, contacts);
 		meetingList.add(meeting);
-		if (!text.equals("")){
+/*		if (!text.equals("")){
 			addMeetingNotes(id, text);
 		}
-	}
+*/	}
 
 	@Override
 	public void addMeetingNotes(int id, String text) {
 		Meeting meeting = getMeeting(id);
 		//work out how to call the right instantiation of PastMeeting and assign notes to its notes field 
-		((PastMeetingImpl) meeting).setNotes(text);
+		((PastMeetingImpl) meeting).setNotes(text); //this cast doesn't work
 	}	
 	
 	/**

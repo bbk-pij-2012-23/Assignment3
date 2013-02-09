@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class MeetingImpl implements Meeting {
+public abstract class MeetingImpl implements Meeting {
 	private Calendar date;
 	private int id;
 	private Set<Contact> contacts; 
@@ -21,6 +21,9 @@ public class MeetingImpl implements Meeting {
 	public MeetingImpl(Calendar date, Set<Contact>contacts){
 		this.date = date;
 		this.contacts = contacts;
+	}
+
+	public MeetingImpl() {
 	}
 
 	public int getId() {

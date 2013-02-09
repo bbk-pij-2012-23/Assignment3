@@ -15,7 +15,9 @@ import org.junit.Test;
 
 import assignment3.Contact;
 import assignment3.ContactImpl;
+import assignment3.ContactManager;
 import assignment3.ContactManagerImpl;
+import assignment3.FutureMeetingImpl;
 import assignment3.Meeting;
 import assignment3.MeetingImpl;
 import assignment3.PastMeeting;
@@ -32,7 +34,7 @@ public class ContactManagerImplTest {
 		Contact sally = new ContactImpl("sally", 2);
 		contacts.add(bob);
 		contacts.add(sally);
-		testMeeting = new MeetingImpl(date, 1, contacts);
+		testMeeting = new FutureMeetingImpl(date, 1, contacts);
 		//testContactManager = new ContactManagerImpl();
 	}
 
@@ -40,11 +42,14 @@ public class ContactManagerImplTest {
 	public void tearDown() throws Exception {
 	}
 
+	/*passes*/
 	@Test
 	public void testContactManagerImpl() {
-		fail("Not yet implemented");
+		ContactManager test = new ContactManagerImpl();
+		assertNotNull(test);
 	}
 
+	/*passes*/
 	@Test
 	public void testAddFutureMeetingID() {
 		//check that id matches the expect id (i.e. number of meetings in list)
@@ -53,6 +58,7 @@ public class ContactManagerImplTest {
 		assertEquals(1, testContactManager.addFutureMeeting(contacts, date));
 	}
 	
+	/*passes*/
 	@Test
 	public void testAddFutureMeetingEmptyList() {
 		//check added to ContactManagerImpl's meetingList field when empty
@@ -62,7 +68,8 @@ public class ContactManagerImplTest {
 		assertNotNull(testContactManager.getMeetingList());
 	}
 	
-	@Test
+	/*passes*/
+	@Test 
 	public void testAddFutureMeetingNotEmptyList() {
 		Calendar newDate = new GregorianCalendar(2013,03,03,10,00);
 		Set<Contact> newContacts = new HashSet<Contact>();
@@ -81,23 +88,22 @@ public class ContactManagerImplTest {
 		fail("Not yet implemented");
 	}
 
+	/*passes*/
 	@Test
 	public void testGetFutureMeeting() {
-		//throw exception if pastmeeting not found (i.e in the future; assuming other test correctly gathers null ids)
-		//return a meeting
-		//return correct futuremeeting to getmeeting
-		fail("Not yet implemented");
+		testAddFutureMeetingNotEmptyList();
+		Meeting test = testContactManager.getMeeting(1);
+		assertEquals(1,test.getId());
 	}
 
 	@Test
 	public void testGetMeeting() {
-		//identify the correct element on the Meeting list
-		//return null if no meeting exists
-		//branch based on whether meeting date is past or future
-		//return correctly casted meeting
-		fail("Not yet implemented");
+		testAddFutureMeetingNotEmptyList();
+		Meeting test = testContactManager.getMeeting(1);
+		assertEquals(1,test.getId());
 	}
 
+	/*FAILS*/
 	@Test
 	public void testGetFutureMeetingListContact() {
 		//tests whether a list of meetings returned but not whether unique or corrected ordered. Method doesn't do that yet anyway
@@ -112,6 +118,7 @@ public class ContactManagerImplTest {
 		assertEquals("2", futureMeetingList.size());
 	}
 
+	/*FAILS*/
 	@Test
 	public void testGetFutureMeetingListCalendar() {
 		//tests whether a list of meetings returned but not whether correct ones
@@ -133,15 +140,14 @@ public class ContactManagerImplTest {
 		fail("Not yet implemented");
 	}
 
+	/*FAILS - method not written yet*/
 	@Test
 	public void testAddNewPastMeeting() {
 		//check that id matches the expect id (i.e. number of meetings in list)
-		List<PastMeeting> emptyList = new LinkedList<PastMeeting>();
-		testContactManager.setPastMeetingList(emptyList);
 		Set<Contact> contacts = testMeeting.getContacts();
 		Calendar date = testMeeting.getDate();
 		testContactManager.addNewPastMeeting(contacts, date, "text");
-		assertNotNull(testContactManager.getPastMeetingList());
+		assertNotNull(testContactManager.getMeetingList());
 		//fail("Not yet implemented");
 	}
 
@@ -152,6 +158,7 @@ public class ContactManagerImplTest {
 		fail("Not yet implemented");
 	}
 
+	/*passes*/
 	@Test
 	public void testAddNewContact() {
 		//ContactManagerImpl tester = new ContactManagerImpl();
@@ -174,6 +181,7 @@ public class ContactManagerImplTest {
 		fail("Not yet implemented");
 	}
 
+/*
 	@Test
 	public void testUpdateMeetingListMatchId() {
 		//look up id in meetingList (which should have two elements with ids 1 and 2 atm
@@ -185,7 +193,7 @@ public class ContactManagerImplTest {
 	public void testUpdateMeetingListCheckDate() {
 		//check date and see if passed. I don't know how to do this separately from next test.
 		fail("Not yet implemented");
-	}
+	} 
 	
 	@Test
 	public void testUpdateMeetingList() { //design decision - storing meetings by type
@@ -195,7 +203,9 @@ public class ContactManagerImplTest {
 		assertEquals(1, pastMeetingList.size());
 		//fail("Not yet implemented");
 	}
+*/	
 	
+	/*passes*/
 	//this is a rubbish test, it only checks whether filename assigned. 
 	@Test
 	public void testMakeContactsXMLFileCreated() throws Exception{
@@ -204,8 +214,8 @@ public class ContactManagerImplTest {
 		assertEquals("testcontacts", testContactManager.makeContactsXMLFile("testcontacts")); 
 	}
 	
-	
-	// I think this fails because of my confusion re inheritance. think it uses futuremeeting not meeting
+	/*passes*/
+	//only partial test of the method (see above)
 	@Test
 	public void testMakeMeetingsXMLFileCreated() throws Exception{
 		testAddFutureMeetingNotEmptyList();
@@ -213,16 +223,19 @@ public class ContactManagerImplTest {
 		assertEquals("testmeetings", testContactManager.makeMeetingsXMLFile("testmeetings")); 
 	}
 	
+	/*passes*/
 	@Test
 	public void testXSLToSet() throws Exception {
 		assertNotNull(testContactManager.importContacts());
 	}
 	
+	/*passes*/
 	@Test
 	public void testXSLToList() throws Exception {
 		assertNotNull(testContactManager.importMeetings());
 	}
 	
+	/*passes*/
 	@Test
 	public void testSpecialCharactersInString(){
 		String expression = "<?xml-stylesheet type=\"text/xsl\" href=\"contacts.xsl\"?>"; //couldn't work out how to create a parser, so using this work around

@@ -82,7 +82,7 @@ public class ListMaker {
 		XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
 		      // Read the XML document
 		Meeting aMeeting = null;
-		Calendar meetingDate = null;
+		Calendar meetingDate = Calendar.getInstance();
 		int meetingId = 0;
 		Set<Contact> meetingContacts = new HashSet<Contact>();
 		while (eventReader.hasNext()) { //iterate down the xmlevents
@@ -94,7 +94,6 @@ public class ListMaker {
 		        	if (event.isStartElement()) {
 		        		if (event.asStartElement().getName().getLocalPart().equals(DATE)) {
 		        			event = eventReader.nextEvent();
-		        			meetingDate = Calendar.getInstance();
 		        		    SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
 		        		    meetingDate.setTime(sdf.parse(event.asCharacters().getData()));// Jigar Joshi; Mar 14 '11 (StackOverflow.com)
 		        		    continue;
@@ -111,7 +110,13 @@ public class ListMaker {
 		        			meetingContacts.add(person);
 		        			continue;
 		        		}
-		        		aMeeting = new MeetingImpl(meetingDate, meetingId, meetingContacts);
+		        		if(meetingDate.before(Calendar.getInstance())){
+		        			aMeeting = new PastMeetingImpl(meetingDate, meetingId, meetingContacts);
+		        			
+		        		}
+		        		else{
+		        			aMeeting = new FutureMeetingImpl(meetingDate, meetingId, meetingContacts);
+		        		}
 		        		meetingList.add(aMeeting);
 		        	}
 		        }
