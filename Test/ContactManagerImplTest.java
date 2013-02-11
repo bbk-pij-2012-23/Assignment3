@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -19,8 +18,6 @@ import assignment3.ContactManager;
 import assignment3.ContactManagerImpl;
 import assignment3.FutureMeetingImpl;
 import assignment3.Meeting;
-import assignment3.MeetingImpl;
-import assignment3.PastMeeting;
 
 public class ContactManagerImplTest {
 	 Meeting testMeeting;
