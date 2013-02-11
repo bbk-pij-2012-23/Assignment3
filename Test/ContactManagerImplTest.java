@@ -134,7 +134,7 @@ public class ContactManagerImplTest {
 		assertEquals(1,test.getId());
 	}
 	
-	/*FAILS*/
+	/*passes*/
 	@Test
 	public void testGetFutureMeetingListContact() {
 		//tests whether a list of meetings returned but not whether unique or corrected ordered. Method doesn't do that yet anyway
@@ -146,10 +146,10 @@ public class ContactManagerImplTest {
 		testContactManager.addFutureMeeting(newContacts,newDate);
 		List<Meeting> futureMeetingList = testContactManager.getFutureMeetingList(sally);
 		System.out.println("Meetings with sally: " + futureMeetingList.size());
-		assertEquals("2", futureMeetingList.size());
+		assertEquals(2, futureMeetingList.size());
 	}
 
-	/*FAILS*/
+	/*passes*/
 	@Test
 	public void testGetFutureMeetingListCalendar() {
 		//tests whether a list of meetings returned but not whether correct ones
@@ -161,14 +161,18 @@ public class ContactManagerImplTest {
 		testContactManager.addFutureMeeting(newContacts,newDate);
 		List<Meeting> futureMeetingList = testContactManager.getFutureMeetingList(newDate);
 		System.out.println("meetings on 3rd April: " + futureMeetingList.size());
-		assertEquals("2", futureMeetingList.size());
+		assertEquals(2, futureMeetingList.size());
 	}
 
+	/*passes*/
 	@Test
 	public void testGetPastMeetingList() {
-		//tests whether a list of meetings returned but not whether correct ones
-		//assertNotNull(testContactManager.getPastMeetingList(sally));
-		fail("Not yet implemented");
+		Contact sally = new ContactImpl("sally", 1);
+		Set<Contact> contacts = new HashSet<Contact>();
+		contacts.add(sally);
+		Calendar date = new GregorianCalendar(2012,02,02,02,02,02);
+		testContactManager.addNewPastMeeting(contacts, date, "text");
+		assertNotNull(testContactManager.getPastMeetingList(sally));
 	}
 
 	/*passes*/
@@ -232,6 +236,7 @@ public class ContactManagerImplTest {
 		returnedSet = testContactManager.getContacts(1,3);
 		assertEquals(2, returnedSet.size());
 	}
+	
 	/*passes*/
 	@Test (expected = IllegalArgumentException.class)
 	public void testGetContactsIntArrayIllegalArgumentException() {
@@ -269,30 +274,8 @@ public class ContactManagerImplTest {
 		Set<Contact> test = testContactManager.getContacts(name);
 		assertEquals(0,test.size());
 	}
-/*
-	@Test
-	public void testUpdateMeetingListMatchId() {
-		//look up id in meetingList (which should have two elements with ids 1 and 2 atm
-		assertNotNull(testContactManager.getPastMeeting(1));
-		//fail("Not yet implemented");
-	}
-	
-	@Test
-	public void testUpdateMeetingListCheckDate() {
-		//check date and see if passed. I don't know how to do this separately from next test.
-		fail("Not yet implemented");
-	} 
-	
-	@Test
-	public void testUpdateMeetingList() { //design decision - storing meetings by type
-		//test whether added to pastMeetingList
-		testContactManager.updateMeetingList();
-		List<PastMeeting> pastMeetingList = testContactManager.getPastMeetingList();
-		assertEquals(1, pastMeetingList.size());
-		//fail("Not yet implemented");
-	}
-*/	
-	
+
+
 	/*passes*/
 	//this is a rubbish test, it only checks whether filename assigned. 
 	@Test

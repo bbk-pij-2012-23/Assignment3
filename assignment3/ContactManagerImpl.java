@@ -1,9 +1,7 @@
 package assignment3;
 
-import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -13,18 +11,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-//on the test branch
+
+
 public class ContactManagerImpl implements ContactManager {
 	private List<Meeting> meetingList;
-	private List<PastMeeting> pastMeetingList; 
+//	private List<PastMeeting> pastMeetingList; 
 	private Set<Contact> allContacts;
 	
 		
@@ -35,23 +34,25 @@ public class ContactManagerImpl implements ContactManager {
 	 * 
 	 * @param meetingList
 	 */
-	public void setMeetingList(List<Meeting> meetingList){  //for testing
+	public void setMeetingList(List<Meeting> meetingList){ 
 		this.meetingList = meetingList;
 	}
 	
-	/**
+/*
 	 * 
 	 * @param pastMeetingList
-	 */
+	 *
 	public void setPastMeetingList(List<PastMeeting> pastMeetingList){
 		this.pastMeetingList = pastMeetingList;
 	}
+*/	
+
 	
 	/**
 	 * 
 	 * @param allContacts
 	 */
-	public void setAllContacts(Set<Contact> allContacts){ //for testing
+	public void setAllContacts(Set<Contact> allContacts){ 
 		this.allContacts = allContacts;
 	}
 	
@@ -67,9 +68,10 @@ public class ContactManagerImpl implements ContactManager {
 		return meetingList;
 	}
 	
-	public List<PastMeeting> getPastMeetingList(){
+/*	public List<PastMeeting> getPastMeetingList(){
 		return pastMeetingList;
 	}
+*/	
 	
 	//other methods here to create a set of contacts and date to pass to this method
 	@Override
@@ -173,11 +175,12 @@ public class ContactManagerImpl implements ContactManager {
 		List<Meeting> futureMeetingList = new ArrayList<Meeting>();
 		Iterator<Meeting> it = getMeetingList().iterator();
 		while (it.hasNext()){
-			Set<Contact> temp = it.next().getContacts();
-			Iterator<Contact> tempit = temp.iterator();
-			while(tempit.hasNext()){
-				if(tempit.next() == contact){
-					futureMeetingList.add(it.next());
+			Meeting tempMeeting = it.next();
+			Set<Contact> tempContacts = tempMeeting.getContacts();
+			Iterator<Contact> itC = tempContacts.iterator();
+			while(itC.hasNext()){
+				if(itC.next() == contact){
+					futureMeetingList.add(tempMeeting);
 				}
 			}
 		}
@@ -187,16 +190,34 @@ public class ContactManagerImpl implements ContactManager {
 
 	@Override
 	public List<Meeting> getFutureMeetingList(Calendar date) {
-		//create a list(or some data structure) containing a subset of meetingList (where date  has not passed)
-		List<Meeting> futureMeetingList = new LinkedList<Meeting>(); //change this when futureMeetingList has something to point at
-		//System.out.println(futureMeetingList.toString());
+		List<Meeting> futureMeetingList = new ArrayList<Meeting>();
+		Iterator<Meeting> it = getMeetingList().iterator();
+		while (it.hasNext()){
+			Meeting tempMeeting = it.next();
+			if(tempMeeting.getDate().equals(date)){
+				futureMeetingList.add(tempMeeting);
+			}
+		}
 		return futureMeetingList;
 	}
 
 	@Override
 	public List<PastMeeting> getPastMeetingList(Contact contact) {
 		//create a list(or some data structure) containing a subset of meetingList (where date has passed)
-		List<PastMeeting> pastMeetingList = new LinkedList<PastMeeting>(); //change this when something can be assigned to pastMeetingList (pos not linkedlist)
+		List<PastMeeting> pastMeetingList = new ArrayList<PastMeeting>();
+		Iterator<Meeting> itM = getMeetingList().iterator();
+		while(itM.hasNext()){
+			Meeting tempMeeting = itM.next();
+			if (tempMeeting.getDate().before(Calendar.getInstance())){
+				Set<Contact> tempContacts = tempMeeting.getContacts();
+				Iterator<Contact> itC = tempContacts.iterator();
+				while (itC.hasNext()){
+					if (contact == itC.next()){
+						pastMeetingList.add((PastMeeting) tempMeeting);
+					}
+				}				
+			}
+		}
 		return pastMeetingList;
 	}
 
@@ -251,12 +272,8 @@ public class ContactManagerImpl implements ContactManager {
 			System.out.println("Contact "+ newContact.getName() + " has been added to your contacts list");
 		}catch(NullPointerException ex){
 			ex.printStackTrace();
-		}catch (Exception e) { //sort this out when handled exceptions properly in XMLMaker
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}		//to add "successful completion" user feedback
+		}	
+	}
 	
 	/**
 	* Returns a list containing the contacts that correspond to the IDs.
@@ -297,8 +314,6 @@ public class ContactManagerImpl implements ContactManager {
 	* @return a list with the contacts whose name contains that string.
 	* @throws NullPointerException if the parameter is null
 	*/
-	/*not sure how to implement the throw. 
-	 * */
 	@Override
 	public Set<Contact> getContacts(String name) {
 		Set<Contact> names = new HashSet<Contact>();
@@ -317,40 +332,50 @@ public class ContactManagerImpl implements ContactManager {
 	
 	//to be run on exit
 	//this is high dependency, not a good implementation
-	public String makeContactsXMLFile(String fileName) throws Exception { //change this to try/catches later
+	public String makeContactsXMLFile(String fileName){ //change this to try/catches later
 		XMLMaker xml = new XMLMaker();
 		xml.setFile(fileName + ".xml");
-		OutputStream output = new FileOutputStream(xml.getFile());
-		XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-		XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(output);
-		String rootElement = "contacts-list";
-		String xslRef = "contacts.xsl";
-		xml.createSkeleton(eventWriter, xslRef, rootElement);
-		XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-		XMLEvent newLine = eventFactory.createDTD("\n"); //adds the new line after the non-#PCDATA elements
-		/*
-		StartDocument startDocument = eventFactory.createStartDocument();
-		eventWriter.add(startDocument);
-		*/
-		
-		Iterator<Contact> it = getAllContacts().iterator(); //I know allContacts can be seen but Keith says using the getter as standard is good practice
-		while (it.hasNext()){
-			StartElement startElement = eventFactory.createStartElement("", "", "contact");
-			eventWriter.add(startElement);
-			eventWriter.add(newLine);
-			Contact person = it.next();
-			xml.createElement(eventWriter, "id", Integer.toString(person.getId()));
-		    xml.createElement(eventWriter, "name", person.getName());
-		    xml.createElement(eventWriter, "note", person.getNotes());
-			EndElement endElement = eventFactory.createEndElement("", "", "contact");
+		try{
+			OutputStream output = new FileOutputStream(xml.getFile());
+			XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+			XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(output);
+			String rootElement = "contacts-list";
+			String xslRef = "contacts.xsl";
+			xml.createSkeleton(eventWriter, xslRef, rootElement);
+			XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+			XMLEvent newLine = eventFactory.createDTD("\n"); //adds the new line after the non-#PCDATA elements
+			/*
+			StartDocument startDocument = eventFactory.createStartDocument();
+			eventWriter.add(startDocument);
+			*/
+			
+			Iterator<Contact> it = getAllContacts().iterator(); //I know allContacts can be seen but Keith says using the getter as standard is good practice
+			while (it.hasNext()){
+				StartElement startElement = eventFactory.createStartElement("", "", "contact");
+				eventWriter.add(startElement);
+				eventWriter.add(newLine);
+				Contact person = it.next();
+				xml.createElement(eventWriter, "id", Integer.toString(person.getId()));
+			    xml.createElement(eventWriter, "name", person.getName());
+			    xml.createElement(eventWriter, "note", person.getNotes());
+				EndElement endElement = eventFactory.createEndElement("", "", "contact");
+				eventWriter.add(endElement);
+				eventWriter.add(newLine);
+			}
+			EndElement endElement = eventFactory.createEndElement("", "", rootElement);
 			eventWriter.add(endElement);
 			eventWriter.add(newLine);
+			eventWriter.add(eventFactory.createEndDocument());
+			eventWriter.close();	
+		}catch(FileNotFoundException ex){
+			ex.printStackTrace();
+			System.out.println("could not access contacts file");
+		}catch(XMLStreamException ex){
+			ex.printStackTrace();
+			System.out.println("there was a problem with the XML writer");
+		}catch(Exception ex){
+			ex.printStackTrace();
 		}
-		EndElement endElement = eventFactory.createEndElement("", "", rootElement);
-		eventWriter.add(endElement);
-		eventWriter.add(newLine);
-		eventWriter.add(eventFactory.createEndDocument());
-		eventWriter.close();	
 		return fileName;
 		
 	}
@@ -410,22 +435,7 @@ public class ContactManagerImpl implements ContactManager {
 		setMeetingList(run.xmlToList("meetings.xml"));
 		return meetingList;
 	}
-	/* on opening or closing */
-	
-	public void updateMeetingList(){ //to be run on opening
-		List<Meeting> meetingList = getMeetingList();
-		if(getPastMeetingList() ==null){
-			List<PastMeeting> pastMeetingList = new LinkedList<PastMeeting>();
-			setPastMeetingList(pastMeetingList);
-		}		
-		int i = 0;
-		while(i<meetingList.size()){
-			if(meetingList.get(i).getDate().before(Calendar.getInstance())){
-				pastMeetingList.add((PastMeeting) meetingList.get(i)); //dont think this casting works
-			}	
-			i++;
-		}	
-	}
+
 	
 	@Override
 	public void flush() {
