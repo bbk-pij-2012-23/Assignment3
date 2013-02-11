@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -444,7 +445,41 @@ public class ContactManagerImpl implements ContactManager {
 	}
 
 	private void launch(){
-		//create a Set<Contact> from contacts.xml and List<Meeting> from meetings.xml
+		CommandLineInterface run = new CommandLineInterface();
+		run.text();
+		run.menu();
+		String str = System.console().readLine();
+		switch(str){
+		case "1": System.out.println("Please type in the name of the contact you want to add");
+		String name = System.console().readLine();
+		System.out.println("Please type in any notes about the contact, e.g. job title, role in startup, contact details, expertise etc. else type none (you can add notes at a later date).");
+		String notes = "" + System.console().readLine();
+		addNewContact(name,notes);
+		run.menu();
+		
+		//this does not handle incorrect format yet - UI is to show working code
+		case "2": System.out.println("Type in a date and time for your meeting in the form dd/mm/yyyy hh:mm (24hr clock).");
+		//parse string into yyyy, mm, dd, hh, mm
+		str = System.console().readLine();
+		Calendar date = new GregorianCalendar(yyyy,mm,dd,hh,min);
+		System.out.println(allContacts.toString());
+		System.out.println("your contact list is displayed above, choose the contacts to invite to this meeting, then enter their ids.");
+		str = System.console().readLine();
+		//not sure how to get these into the right int vararg
+		//...
+		int ids;
+		Set<Contact> meetingContacts = getContacts(ids);
+		addFutureMeeting(meetingContacts, date);
+		
+		case "3": System.out.println("");
+		addNewPastMeeting(contacts,date,notes);
+		
+		case "4": System.out.println("");
+		case "5": System.out.println("");
+		case "6": System.out.println("");
+		case "7": 
+			
+		}
 		
 		Set<Contact> allContacts = new HashSet<Contact>();
 		this.setAllContacts(allContacts);
