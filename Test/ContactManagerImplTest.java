@@ -212,17 +212,63 @@ public class ContactManagerImplTest {
 		testContactManager.addNewContact(anothername, othernotes);
 		assertEquals(2,testContactManager.getAllContacts().size());
 	}
-
+	
+	/*passes*/
 	@Test
-	public void testGetContactsIntArray() {
-		fail("Not yet implemented");
+	public void testGetContactsIntArray1Contact() {
+		Set<Contact> returnedSet = new HashSet<Contact>();
+		testContactManager.addNewContact("ellie", "notes");
+		returnedSet = testContactManager.getContacts(1);
+		assertEquals(1, returnedSet.size());
 	}
-
+	
+	/*passes*/
+	@Test
+	public void testGetContactsIntArray2Contacts() {
+		Set<Contact> returnedSet = new HashSet<Contact>();
+		testContactManager.addNewContact("ellie", "notes");
+		testContactManager.addNewContact("bob",  "stuff");
+		testContactManager.addNewContact("sue", "notes about sue");
+		returnedSet = testContactManager.getContacts(1,3);
+		assertEquals(2, returnedSet.size());
+	}
+	/*passes*/
+	@Test (expected = IllegalArgumentException.class)
+	public void testGetContactsIntArrayIllegalArgumentException() {
+		testContactManager.addNewContact("ellie", "notes");
+		testContactManager.getContacts(3);
+	}
+	
+	/*fails but I don't know why because I expect a nullpointerexception, maybe it has others*/
+	@Test (expected = NullPointerException.class)
+	public void testGetContactsIntArrayNullPointerException() {
+		testContactManager.getContacts(1);
+	}
+	
+	/*passes*/
 	@Test
 	public void testGetContactsString() {
-		fail("Not yet implemented");
+		testContactManager.addNewContact("eleanor mann", "none");
+		assertNotNull(testContactManager.getContacts("or m"));
+	}
+	
+	/*passes*/
+	@Test
+	public void testGetContactsStringMultiple() {
+		testContactManager.addNewContact("eleanor mann", "none");
+		testContactManager.addNewContact("oliver mann", "n/a");
+		Set<Contact> test = testContactManager.getContacts("mann");
+		assertEquals(2, test.size());
 	}
 
+	//what happens if parameter is null?
+	@Test (expected = NullPointerException.class)
+	public void testGetContactsNullString() {
+		String name = null;
+		testContactManager.addNewContact("eleanor mann", "none");
+		Set<Contact> test = testContactManager.getContacts(name);
+		assertEquals(0,test.size());
+	}
 /*
 	@Test
 	public void testUpdateMeetingListMatchId() {

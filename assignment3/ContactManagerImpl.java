@@ -113,6 +113,7 @@ public class ContactManagerImpl implements ContactManager {
 			}
 		}
 	}
+	
 	/**
 	* Returns the FUTURE meeting with the requested ID, or null if there is none.
 	*
@@ -257,11 +258,36 @@ public class ContactManagerImpl implements ContactManager {
 		
 	}		//to add "successful completion" user feedback
 	
-
+	/**
+	* Returns a list containing the contacts that correspond to the IDs.
+	*
+	* @param ids an arbitrary number of contact IDs
+	* @return a list containing the contacts that correspond to the IDs.
+	* @throws IllegalArgumentException if any of the IDs does not correspond to a real contact
+	*/
 	@Override
 	public Set<Contact> getContacts(int... ids) {
-		// TODO Auto-generated method stub
-		return null;
+		Set<Contact> returnedSet = new HashSet<Contact>();
+		try{
+			for (int id : ids){
+				Iterator<Contact> it = getAllContacts().iterator();
+				boolean idExists = false;
+				while (it.hasNext()){
+					Contact e = it.next();
+					if(e.getId()==id){
+						returnedSet.add(e);
+						idExists = true;
+					}
+				}
+				if (idExists == false){
+					throw new IllegalArgumentException("this contact could not be found");
+				}
+			}
+		}catch(NullPointerException ex){
+			ex.printStackTrace();
+			System.out.println("There are no contacts in the list");
+		}
+		return returnedSet;
 	}
 
 	/**
@@ -271,11 +297,21 @@ public class ContactManagerImpl implements ContactManager {
 	* @return a list with the contacts whose name contains that string.
 	* @throws NullPointerException if the parameter is null
 	*/
+	/*not sure how to implement the throw. 
+	 * */
 	@Override
 	public Set<Contact> getContacts(String name) {
 		Set<Contact> names = new HashSet<Contact>();
-		//procedure to look up the string in allContacts
-		//what about regex?
+			Iterator<Contact> it = getAllContacts().iterator();
+			while (it.hasNext()){
+				Contact e = it.next();
+				if(e.getName().contains(name)){
+						names.add(e);
+				}
+				else{
+					throw new NullPointerException("name is null");
+				}
+			}
 		return names;
 	}
 	

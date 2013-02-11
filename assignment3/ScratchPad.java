@@ -3,6 +3,7 @@ package assignment3;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -10,6 +11,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import Test.ContactManagerImplTest;
 
 public class ScratchPad {
 	private Set<Contact> people;
@@ -43,6 +46,20 @@ public class ScratchPad {
 			result = result + number;
 		}
 		return result;
+	}
+	
+	public List<Meeting>findMeetings(int...ids){
+		ContactManagerImpl test = new ContactManagerImpl();
+		List<Meeting> returnedMeetings = new ArrayList<Meeting>();
+		for(int id : ids){
+			Iterator<Meeting> it = test.getMeetingList().iterator();
+			while(it.hasNext()){
+				if(it.next().getId()==id){
+					returnedMeetings.add(it.next());
+				}	
+			}
+		}
+		return returnedMeetings;
 	}
 	
 
@@ -179,15 +196,21 @@ public class ScratchPad {
 	
 	/**
 	 * @param args
+	 * @throws Exception 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		ScratchPad run = new ScratchPad();
 	
-		System.out.println("<?xml-stylesheet type="text/xsl" href="meetings.xsl"?>");
-		/*	run.dateFinder();
+		//System.out.println("<?xml-stylesheet type="text/xsl" href="meetings.xsl"?>");
+		//run.dateFinder();
 		System.out.println(run.varargs(43,6,5,43));
+		ContactManagerImplTest tester = new ContactManagerImplTest();
+		tester.setUp();
+		tester.testAddFutureMeetingNotEmptyList();
 		
-		//run.tryAddContact();*/
+		System.out.println(run.findMeetings(1));
+/*		
+		//run.tryAddContact();
 		String name = "joe";
 		String notes = "notes";
 		System.out.println(run.trySetId("joe", "notes"));
@@ -212,7 +235,7 @@ public class ScratchPad {
 			ex.printStackTrace();
 		}
 		
-		
+*/		
 		
 	}
 
