@@ -81,7 +81,7 @@ public class ContactManagerImpl implements ContactManager {
 		int meetingId = 0;
 		if (getMeetingList() == null){
 			meetingId = 1;
-			List<Meeting> meetingList = new LinkedList<Meeting>(); //this seems a bit sloppy, since we need a meeting list from the start
+			List<Meeting> meetingList = new ArrayList<Meeting>(); //this seems a bit sloppy, since we need a meeting list from the start
 			setMeetingList(meetingList);
 		}
 		else{
@@ -445,10 +445,17 @@ public class ContactManagerImpl implements ContactManager {
 	}
 
 	private void launch(){
-		CommandLineInterface run = new CommandLineInterface();
+/*		try{
+			importContacts();
+			importMeetings();
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+*/		CommandLineInterface run = new CommandLineInterface();
 		run.text();
 		run.menu();
 		String str = System.console().readLine();
+		
 		switch(str){
 		case "1": System.out.println("Please type in the name of the contact you want to add");
 		String name = System.console().readLine();
@@ -459,31 +466,80 @@ public class ContactManagerImpl implements ContactManager {
 		
 		//this does not handle incorrect format yet - UI is to show working code
 		case "2": System.out.println("Type in a date and time for your meeting in the form dd/mm/yyyy hh:mm (24hr clock).");
-		//parse string into yyyy, mm, dd, hh, mm
-		str = System.console().readLine();
+/*		str = System.console().readLine();
+		int yyyy = Integer.parseInt(str.substring(0, 3));
+		int mm = Integer.parseInt(str.substring(5, 6));
+		int dd = Integer.parseInt(str.substring(8, 9));
+		int hh = Integer.parseInt(str.substring(11, 12));
+		int min = Integer.parseInt(str.substring(14, 15));
 		Calendar date = new GregorianCalendar(yyyy,mm,dd,hh,min);
 		System.out.println(allContacts.toString());
 		System.out.println("your contact list is displayed above, choose the contacts to invite to this meeting, then enter their ids.");
+		str = System.console().readLine();
+		String[] arrayStr = str.split(" ");
+		int i = 0;
+		while (i<arrayStr.length){
+			
+		}
+		//not sure how to get these into the right int vararg
+		//...
+		Set<Contact> meetingContacts = getContacts(ids);
+		addFutureMeeting(meetingContacts, date);
+*/		run.menu();
+		
+		case "3": System.out.println(""); //needs thought
+/*		addNewPastMeeting(contacts,date,notes);
+*/		run.menu();
+		
+		case "4": System.out.println("Enter the name of the contact for whom you want to get the meeting schedule:");
+		str = System.console().readLine();
+		Iterator<Contact> it = getAllContacts().iterator();
+
+		while(it.hasNext()){
+			Contact contact = it.next();
+			if (contact.getName().equals(str)){
+				getFutureMeetingList(contact);
+			}	
+		}
+		run.menu();
+		
+		case "5": System.out.println("enter a date to display meeting schedule for that day using the format yyyy mm dd:");
+		// for demo purposes only - would need to handle various deviations from needed format
+		str = System.console().readLine();
+		int yyyy = Integer.parseInt(str.substring(0, 3));
+		int mm = Integer.parseInt(str.substring(5, 6));
+		int dd = Integer.parseInt(str.substring(8, 9));
+		Calendar date = new GregorianCalendar(yyyy,mm,dd);
+		Iterator<Meeting> itM = getMeetingList().iterator();
+		while(itM.hasNext()){
+			Meeting meeting = itM.next();
+			if (meeting.getDate().equals(date)){
+				getFutureMeetingList(date);
+			}	
+		}
+		run.menu();
+		
+		case "6": System.out.println(allContacts.toString());
+/*		System.out.println("your contact list is displayed above, choose the contacts to invite to this meeting, then enter their ids.");
 		str = System.console().readLine();
 		//not sure how to get these into the right int vararg
 		//...
 		int ids;
 		Set<Contact> meetingContacts = getContacts(ids);
-		addFutureMeeting(meetingContacts, date);
-		
-		case "3": System.out.println("");
-		addNewPastMeeting(contacts,date,notes);
-		
-		case "4": System.out.println("");
-		case "5": System.out.println("");
-		case "6": System.out.println("");
+*/		run.menu();
+
 		case "7": 
+			try{
+				makeContactsXMLFile("contacts");
+				makeMeetingsXMLFile("meetings");
+				flush();
+			}catch(Exception ex){
+				ex.printStackTrace();
+				System.out.println("there was a problem saving your data, if you would like to try again please select menu option 7.");
+				run.menu();
+			}
 			
 		}
-		
-		Set<Contact> allContacts = new HashSet<Contact>();
-		this.setAllContacts(allContacts);
-		System.out.println("hello world");
 		
 		//create a meeting list also
 	}

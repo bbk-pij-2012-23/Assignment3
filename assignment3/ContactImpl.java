@@ -11,7 +11,7 @@ public class ContactImpl implements Contact {
 	}
 	/*temporary constructor for making Contact sets for individual meetings - update when resolved.
 	 * */
-	public ContactImpl(String data) {
+	public ContactImpl(String name) {
 		this.name = name;
 	}
 
