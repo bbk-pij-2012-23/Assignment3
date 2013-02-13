@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -25,22 +26,9 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public class XMLMaker {
-	private String contactsFile;
-	private static String CONTACT = "contact";
-	private static String ID = "id";
-	private static String NAME = "name";
-	
 	
 	public XMLMaker() {
 		// TODO Auto-generated constructor stub
-	}
-	
-	public void setFile(String contactsFile){
-		this.contactsFile = contactsFile;
-	}
-	
-	public String getFile(){
-		return contactsFile;
 	}
 	
 	public void createSkeleton(XMLEventWriter eventWriter, String xslRef, String rootElement)  {
@@ -79,7 +67,87 @@ public class XMLMaker {
 		eventWriter.add(newLine);
 	}	
 		
-		
-
+		//need to control the create element calls from the type specific stuff
 	
+	public void makeContactsXMLFile(String type){ 
+		String file;
+		String rootElement;
+		String xslRef;
+		Iterator it;
+		String element1;
+		String element2;
+		String element3;
+		String element4;
+		String value2;
+		String value3;
+		String value4;
+		
+		if (type.equals("contacts")){
+			ContactXML contactXML = new ContactXML();
+			file = contactXML.getFileName();
+			rootElement = contactXML.getRootElement();
+			xslRef = contactXML.getXslRef();
+			ContactManagerImpl getInfo = new ContactManagerImpl();
+			it = getInfo.getAllContacts().iterator();
+			Contact person = (Contact) it.next();
+			element1 = contactXML.getElement1();
+			element2 = contactXML.getElement2();
+			element3 = contactXML.getElement3();
+			element4 = contactXML.getElement4();
+			value2 = Integer.toString(person.getId());
+			value3 = person.getName();
+			value4 = person.getNotes();
+		}	
+		else{
+			MeetingXML meetingXML = new MeetingXML();
+			file = meetingXML.getFileName();
+			rootElement = meetingXML.getRootElement();
+			xslRef = meetingXML.getXslRef();
+			ContactManagerImpl getInfo = new ContactManagerImpl();
+			it = getInfo.getMeetingList().iterator();
+			Meeting meeting = (Meeting) it.next();
+			element1 = meetingXML.getElement1();
+			element2 = meetingXML.getElement2();
+			element3 = meetingXML.getElement3();
+			element4 = meetingXML.getElement4();
+			value2 = Integer.toString(meeting.getId());
+			value3 = meeting.getDate();//sort this out
+			value4 = meeting.getNotes();//and this
+		}		
+		try{
+			OutputStream output = new FileOutputStream(file);
+			XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+			XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(output);
+			createSkeleton(eventWriter, xslRef, rootElement);
+			XMLEventFactory eventFactory = XMLEventFactory.newInstance();
+			XMLEvent newLine = eventFactory.createDTD("\n"); //adds the new line after the non-#PCDATA elements
+			while (it.hasNext()){
+				StartElement startElement = eventFactory.createStartElement("", "", element1);
+				eventWriter.add(startElement);
+				eventWriter.add(newLine);
+				createElement(eventWriter, element2, value2);
+			    createElement(eventWriter, element3, value3);
+			    createElement(eventWriter, element4, value4);
+				EndElement endElement = eventFactory.createEndElement("", "", element1);
+				eventWriter.add(endElement);
+				eventWriter.add(newLine);
+			}
+			EndElement endElement = eventFactory.createEndElement("", "", rootElement);
+			eventWriter.add(endElement);
+			eventWriter.add(newLine);
+			eventWriter.add(eventFactory.createEndDocument());
+			eventWriter.close();	
+		}catch(FileNotFoundException ex){
+			ex.printStackTrace();
+			System.out.println("could not access contacts file");
+		}catch(XMLStreamException ex){
+			ex.printStackTrace();
+			System.out.println("there was a problem with the XML writer");
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	
+	
+
+	}
 }
