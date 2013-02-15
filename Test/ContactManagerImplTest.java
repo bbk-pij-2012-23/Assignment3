@@ -49,7 +49,7 @@ public class ContactManagerImplTest {
 	/*passes*/
 	@Test
 	public void testAddFutureMeetingID() {
-		//check that id matches the expect id (i.e. number of meetings in list)
+		// check that id matches the expect id (doesn't mean meeting added successfully - that needs the next test)
 		Set<Contact> contacts = testMeeting.getContacts();
 		Calendar date = testMeeting.getDate();
 		assertEquals(1, testContactManager.addFutureMeeting(contacts, date));

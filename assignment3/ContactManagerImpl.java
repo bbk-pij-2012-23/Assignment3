@@ -24,75 +24,74 @@ import javax.xml.stream.events.XMLEvent;
 
 public class ContactManagerImpl implements ContactManager {
 	private List<Meeting> meetingList;
-//	private List<PastMeeting> pastMeetingList; 
 	private Set<Contact> allContacts;
 	
-		
-	public ContactManagerImpl() {
-	}
-	
 	/**
-	 * 
-	 * @param meetingList
-	 */
-	public void setMeetingList(List<Meeting> meetingList){ 
-		this.meetingList = meetingList;
-	}
-	
-/*
-	 * 
-	 * @param pastMeetingList
-	 *
-	public void setPastMeetingList(List<PastMeeting> pastMeetingList){
-		this.pastMeetingList = pastMeetingList;
-	}
-*/	
-
-	
-	/**
-	 * 
 	 * @param allContacts
 	 */
 	public void setAllContacts(Set<Contact> allContacts){ 
 		this.allContacts = allContacts;
 	}
-	
+
 	/**
-	 * 
 	 * @return allContacts
 	 */
 	public Set<Contact> getAllContacts() {
 	 	return allContacts;
 	}
 	
+	/** @param meetingList
+	 */
+	public void setMeetingList(List<Meeting> meetingList){ 
+		this.meetingList = meetingList;
+	}	
+
+	/**
+	 * @return meetingList
+	 */
 	public List<Meeting> getMeetingList(){
 		return meetingList;
 	}
 	
-/*	public List<PastMeeting> getPastMeetingList(){
-		return pastMeetingList;
-	}
-*/	
-	
 	//other methods here to create a set of contacts and date to pass to this method
+	/**
+	* Add a new meeting to be held in the future.
+	*
+	* @param contacts a list of contacts that will participate in the meeting
+	* @param date the date on which the meeting will take place
+	* @return the ID for the meeting
+	* @throws IllegalArgumentException if the meeting is set for a time in the past,
+	* of if any contact is unknown / non-existent
+	*/
 	@Override
-	public int addFutureMeeting(Set<Contact> contacts, Calendar date) throws IllegalArgumentException{
-		// create a FutureMeeting, add it to a List<Meeting>		
+	public int addFutureMeeting(Set<Contact> contacts, Calendar date){
 		int meetingId = 0;
-		if (getMeetingList() == null){
+		if (date.before(Calendar.getInstance())){
+			throw new IllegalArgumentException("That date has passed");
+		}
+		if (mergeSets(contacts, getAllContacts()).size()>allContacts.size()){
+			throw new IllegalArgumentException("Some contacts have not been registered");
+		}
+		if (getMeetingList() == null){ //if no meeting list has been set yet, create it and add meeting
 			meetingId = 1;
-			List<Meeting> meetingList = new ArrayList<Meeting>(); //this seems a bit sloppy, since we need a meeting list from the start
+			List<Meeting> meetingList = new ArrayList<Meeting>(); 
 			setMeetingList(meetingList);
 		}
 		else{
-			meetingId = getMeetingList().size() +1;
+			meetingId = getMeetingList().size() +1; //otherwise count the no. of meetings
 		}
 		Meeting meeting = new FutureMeetingImpl(date, meetingId, contacts);
-		meetingList.add(meeting);
-		System.out.println(meeting.toString());
-		return meetingId;
+		meetingList.add(meeting);	
+		return meetingId;	
 	}
 
+		private Set<Contact> mergeSets(Set<Contact> contacts, Set<Contact> allContacts){
+			Set<Contact> temp = new HashSet<Contact>();
+			temp.addAll(contacts);
+			temp.addAll(allContacts);
+			return temp;
+		}
+		
 	/**
 	*Returns the PAST meeting with the requested ID, or null if it there is none.
 	* 
