@@ -27,9 +27,6 @@ import javax.xml.stream.events.XMLEvent;
 
 public class XMLMaker {
 	
-	public XMLMaker() {
-		// TODO Auto-generated constructor stub
-	}
 	
 	public void createSkeleton(XMLEventWriter eventWriter, String xslRef, String rootElement)  {
 		try{

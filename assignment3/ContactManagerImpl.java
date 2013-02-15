@@ -69,8 +69,20 @@ public class ContactManagerImpl implements ContactManager {
 		if (date.before(Calendar.getInstance())){
 			throw new IllegalArgumentException("That date has passed");
 		}
-		if (mergeSets(contacts, getAllContacts()).size()>allContacts.size()){
-			throw new IllegalArgumentException("Some contacts have not been registered");
+		Iterator<Contact> it = contacts.iterator();
+		int[] ids = new int[contacts.size()];
+		int i = 0;
+		while (it.hasNext()){
+			ids[i]=it.next().getId();
+			i++;
+		}
+		try{
+			getContacts(ids);
+		}catch(IllegalArgumentException ex){
+			ex.printStackTrace();
+			System.out.println("all contacts must be correctly registered");
+		}catch(NullPointerException ex){
+			ex.printStackTrace();
 		}
 		if (getMeetingList() == null){ //if no meeting list has been set yet, create it and add meeting
 			meetingId = 1;
@@ -85,13 +97,7 @@ public class ContactManagerImpl implements ContactManager {
 		return meetingId;	
 	}
 
-		private Set<Contact> mergeSets(Set<Contact> contacts, Set<Contact> allContacts){
-			Set<Contact> temp = new HashSet<Contact>();
-			temp.addAll(contacts);
-			temp.addAll(allContacts);
-			return temp;
-		}
-		
+
 	/**
 	*Returns the PAST meeting with the requested ID, or null if it there is none.
 	* 
@@ -439,7 +445,13 @@ public class ContactManagerImpl implements ContactManager {
 	
 	@Override
 	public void flush() {
-		// TODO Auto-generated method stub
+		try{
+			makeContactsXMLFile("contacts");
+			makeMeetingsXMLFile("meetings");
+		}catch(Exception ex){
+			ex.printStackTrace();
+			System.out.println("there was a problem saving your data, if you would like to try again please select menu option 7.");
+		}
 
 	}
 
@@ -453,7 +465,7 @@ public class ContactManagerImpl implements ContactManager {
 */		CommandLineInterface run = new CommandLineInterface();
 		run.text();
 		run.menu();
-		String str = System.console().readLine();
+		String str = "7";
 		
 		switch(str){
 		case "1": System.out.println("Please type in the name of the contact you want to add");
@@ -529,8 +541,8 @@ public class ContactManagerImpl implements ContactManager {
 
 		case "7": 
 			try{
-				makeContactsXMLFile("contacts");
-				makeMeetingsXMLFile("meetings");
+				//makeContactsXMLFile("contacts");
+				//makeMeetingsXMLFile("meetings");
 				flush();
 			}catch(Exception ex){
 				ex.printStackTrace();
