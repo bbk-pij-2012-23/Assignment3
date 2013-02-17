@@ -5,14 +5,12 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
@@ -44,7 +42,8 @@ public class ContactManagerImpl implements ContactManager {
 	 	return allContacts;
 	}
 	
-	/** @param meetingList
+	/**
+	 *  @param meetingList
 	 */
 	public void setMeetingList(List<Meeting> meetingList){ 
 		this.meetingList = meetingList;
@@ -57,8 +56,8 @@ public class ContactManagerImpl implements ContactManager {
 		return meetingList;
 	}
 	
-	//other methods here to create a set of contacts and date to pass to this method
 	/**
+	* The UI will have to obtain contacts and date from the user, to pass to this method
 	* Add a new meeting to be held in the future.
 	*
 	* @param contacts a list of contacts that will participate in the meeting
@@ -73,7 +72,7 @@ public class ContactManagerImpl implements ContactManager {
 		if (date.before(Calendar.getInstance())){
 			throw new IllegalArgumentException("That date has passed");
 		}
-		checkContacts(contacts);
+		checkContacts(contacts); //check contacts are all registered
 		if (getMeetingList() == null){ //if no meeting list has been set yet, create it and add meeting
 			meetingId = 1;
 			List<Meeting> meetingList = new ArrayList<Meeting>(); 
@@ -98,18 +97,23 @@ public class ContactManagerImpl implements ContactManager {
 	@Override	
 	public PastMeeting getPastMeeting(int id) {
 		PastMeeting meeting = null;
-		if(meetingList == null){
+		if(meetingList == null){ //check that the list is not empty
 			return meeting;
 		}
 		else{
-			meeting = (PastMeeting) getMeetingList().get(id -1);
-			if(meeting.getDate().after(Calendar.getInstance())){
-				throw new IllegalArgumentException("this meeting hasn't happened yet");
-			}
-			else{
-				return meeting;
+			try{
+				meeting = (PastMeeting) getMeetingList().get(id -1);
+				if(meeting.getDate().after(Calendar.getInstance())){ //then check whether the date is in the past
+					throw new IllegalArgumentException("this meeting hasn't happened yet");
+				}
+			}catch(IndexOutOfBoundsException ex){
+				ex.printStackTrace();
+				System.out.println("Meeting with that ID could not be found");
+			}catch(NullPointerException ex){
+				ex.printStackTrace(); //if meeting ID can't be found, meeting date can't be found either
 			}
 		}
+		return meeting;
 	}
 	
 	/**
@@ -135,27 +139,37 @@ public class ContactManagerImpl implements ContactManager {
 			}
 		}
 	}
-
+	
+	/**
+	* Returns the meeting with the requested ID, or null if it there is none.
+	*
+	* @param id the ID for the meeting
+	* @return the meeting with the requested ID, or null if it there is none.
+	*/
 	@Override
 	public Meeting getMeeting(int id) {
 		Meeting meeting = null;
-		
-		if(getMeetingList().get(id-1)==null){
+		try{
+			meeting = getMeetingList().get(id-1);
+			if(getMeetingList().get(id-1).getDate().before(Calendar.getInstance())){
+				meeting = getPastMeeting(id);
+			}
+			else{
+				meeting = getFutureMeeting(id);
+			}
+		}catch(IndexOutOfBoundsException ex){		
+			ex.printStackTrace();
 			System.out.println("no meetings with id " + id);
 			return meeting;
+		}catch(NullPointerException ex){
+			ex.printStackTrace(); //if no meeting then getMeeting throws NPE
+			return meeting;
 		}
-		else if (getMeetingList().get(id-1).getDate().before(Calendar.getInstance())){
-			meeting = getPastMeeting(id);
-		}
-		else{
-			meeting = getFutureMeeting(id);
-		}
-		
 		return meeting;
 		
 	}
 	
-	/**
+	/**I forgot to order the list
 	* Returns the list of future meetings scheduled with this contact.
 	*
 	* If there are none, the returned list will be empty. Otherwise,
@@ -180,8 +194,8 @@ public class ContactManagerImpl implements ContactManager {
 				}
 			}
 		}
-		//System.out.println(futureMeetingList.toString());
-		return futureMeetingList; //may have to create a field in the end but not for now...
+	
+		return futureMeetingList;
 	}
 
 	@Override
@@ -364,12 +378,12 @@ public class ContactManagerImpl implements ContactManager {
 	}
 	
 	//to be run on exit
-	//I've put in some things to decrease dependency but its still high
+	//I've given up on trying to reduce dependency. ran out of time
 	public boolean makeContactsXMLFile(){
 		XMLMaker xml = new XMLMaker();
 		if (getAllContacts() != null){
 			try{
-				OutputStream output = new FileOutputStream("contacts.xml"); //shoulld create this file if not exists
+				OutputStream output = new FileOutputStream("contacts.xml"); //should create this file if not exists
 				XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 				XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(output);
 				String rootElement = "contacts-list";
@@ -377,11 +391,7 @@ public class ContactManagerImpl implements ContactManager {
 				xml.createSkeleton(eventWriter, xslRef, rootElement);
 				XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 				XMLEvent newLine = eventFactory.createDTD("\n"); //adds the new line after the non-#PCDATA elements
-				/*
-				StartDocument startDocument = eventFactory.createStartDocument();
-				eventWriter.add(startDocument);
-				*/
-				
+
 				Iterator<Contact> it = getAllContacts().iterator(); //I know allContacts can be seen but Keith says using the getter as standard is good practice
 				while (it.hasNext()){
 					StartElement startElement = eventFactory.createStartElement("", "", "contact");
@@ -430,11 +440,6 @@ public class ContactManagerImpl implements ContactManager {
 				xml.createSkeleton(eventWriter, xslRef, rootElement);
 				XMLEventFactory eventFactory = XMLEventFactory.newInstance();
 				XMLEvent newLine = eventFactory.createDTD("\n"); //adds the new line after the non-#PCDATA elements
-				/*
-				StartDocument startDocument = eventFactory.createStartDocument();
-				eventWriter.add(startDocument);
-				*/
-				
 				Iterator<Meeting> it = getMeetingList().iterator(); //I know allContacts can be seen but Keith says using the getter as standard is good practice
 				while (it.hasNext()){
 					StartElement startElement = eventFactory.createStartElement("", "", "meeting");
@@ -448,7 +453,6 @@ public class ContactManagerImpl implements ContactManager {
 				    	Contact person = it1.next();
 				    	xml.createElement(eventWriter, "contact", person.getName());
 				    }
-				    //xml.createElement(eventWriter, "note", pastMeeting.getNotes()); //only past meeting
 					EndElement endElement = eventFactory.createEndElement("", "", "meeting");
 					eventWriter.add(endElement);
 					eventWriter.add(newLine);
@@ -462,11 +466,9 @@ public class ContactManagerImpl implements ContactManager {
 			}catch(FileNotFoundException ex){
 				ex.printStackTrace();
 				System.out.println("could not access contacts file");
-				//return false;
 			}catch(XMLStreamException ex){
 				ex.printStackTrace();
 				System.out.println("there was a problem with the XML writer");
-				//return false;
 			}catch(Exception ex){
 				ex.printStackTrace();
 			}

@@ -2,16 +2,16 @@
 <?xml-stylesheet type="text/xsl" href="meetings.xsl"?><meetings-list>
 	<meeting>
 	<id>0</id>
-	<date>Sun Feb 17 13:19:59 GMT 2013</date>
+	<date>Sun Feb 17 20:38:39 GMT 2013</date>
 </meeting>
 <meeting>
 	<id>0</id>
-	<date>Sun Feb 17 13:19:59 GMT 2013</date>
+	<date>Sun Feb 17 20:38:39 GMT 2013</date>
 </meeting>
 <meeting>
 	<id>3</id>
-	<date>Sun Feb 17 13:19:59 GMT 2013</date>
-	<contact>sally</contact>
+	<date>Sun Feb 17 20:38:39 GMT 2013</date>
 	<contact>bob</contact>
+	<contact>sally</contact>
 </meeting>
 </meetings-list>

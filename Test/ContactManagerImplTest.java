@@ -84,6 +84,7 @@ public class ContactManagerImplTest {
 		Calendar newDate = new GregorianCalendar(2013,03,03,10,00);
 		Set<Contact> newContacts = new HashSet<Contact>();
 		newContacts.addAll(testMeeting.getContacts());
+		testContactManager.setAllContacts(testMeeting.getContacts());
 		testContactManager.addFutureMeeting(newContacts,newDate);
 		testContactManager.addFutureMeeting(newContacts,newDate);
 		List<Meeting> meetingList = testContactManager.getMeetingList();
@@ -93,21 +94,24 @@ public class ContactManagerImplTest {
 	/*passes*/
 	@Test
 	public void testGetPastMeeting(){
+		testContactManager.setAllContacts(testMeeting.getContacts());
 		testAddNewPastMeeting();
 		assertEquals(1,testContactManager.getPastMeeting(1).getId());
 	}
 
-	/*passes*/
+	
 	@Test(expected= ClassCastException.class)
 	public void testGetPastMeetingWithFutureDate(){
+		testContactManager.setAllContacts(testMeeting.getContacts());
 		testAddFutureMeetingEmptyList();
 		testContactManager.getPastMeeting(1).getId();
 	}
 	
-	@Test(expected= IllegalArgumentException.class)
-	public void testGetPastMeetingWithMissingContact(){
+	@Test
+	public void testGetPastMeetingWithInvalidID(){
+		testContactManager.setAllContacts(testMeeting.getContacts());
 		testAddNewPastMeeting();
-		testContactManager.getPastMeeting(1).getId();
+		assertNull(testContactManager.getPastMeeting(2).getId());
 	}
 	
 	/*passes*/
@@ -138,6 +142,14 @@ public class ContactManagerImplTest {
 		testAddNewPastMeeting();
 		Meeting test = testContactManager.getMeeting(1);
 		assertEquals(1,test.getId());
+	}
+	
+	/*passes*/
+	@Test
+	public void testGetMeetingInvalidID() {
+		testAddNewPastMeeting();
+		Meeting test = testContactManager.getMeeting(2);
+		assertNull(test);
 	}
 	
 	/*passes*/
@@ -310,15 +322,13 @@ public class ContactManagerImplTest {
 	 * this only tests whether the method reached the return, not the content of the method*/
 	@Test
 	public void testMakeContactsXMLFileCreatedFalse(){
-		//System.out.println(testContactManager.getAllContacts().toString());
 		assertEquals(false, testContactManager.makeContactsXMLFile()); 
 	}
 	/*passes*/
 	//only partial test of the method (see above)
 	@Test
-	public void testMakeMeetingsXMLFileCreated() throws Exception{
+	public void testMakeMeetingsXMLFileCreated() {
 		testAddFutureMeetingNotEmptyList();
-		//System.out.println(testContactManager.getMeetingList().toString());
 		assertEquals(true, testContactManager.makeMeetingsXMLFile()); 
 	}
 	
@@ -326,7 +336,6 @@ public class ContactManagerImplTest {
 	//only partial test of the method (see above)
 	@Test
 	public void testMakeMeetingsXMLFileCreatedFalse(){
-		//System.out.println(testContactManager.getMeetingList().toString());
 		assertEquals(false, testContactManager.makeMeetingsXMLFile()); 
 	}
 	
@@ -367,11 +376,6 @@ public class ContactManagerImplTest {
 	public void testFlush() {
 		testContactManager.flush();
 		
-	}
-
-	@Test
-	public void testMain() {
-		fail("Not yet implemented");
 	}
 	
 	
