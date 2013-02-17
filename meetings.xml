@@ -1,40 +1,17 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<?xml-stylesheet type="text/xsl" href="meetings.xsl"?>
-<!-- Edited by me -->
-<meeting-list>
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="meetings.xsl"?><meetings-list>
 	<meeting>
-		<past-meeting>Past Meeting</past-meeting>
-		<date>13/03/2012, 13:30</date>
-		<id>1</id>
-		<contact>Bob Smith</contact> <!--add attributes id-->
-		<contact>Jane Smith</contact>
-		<notes>Our first meeting. Roles were established. </notes>
-	</meeting>
-	<meeting>
-		<past-meeting>Past Meeting</past-meeting>
-		<date>17/05/2012, 13:30</date>
-		<id>2</id>
-		<contact>Bob Smith</contact> <!--add attributes id-->
-		<contact>Jane Smith</contact>
-		<notes>agreed system proposal. </notes>
-	</meeting>
-	<meeting>
-		<past-meeting>Past Meeting</past-meeting>
-		<date>16/10/2012, 13:30</date>
-		<id>3</id>
-		<contact>Bob Smith</contact> <!--add attributes id-->
-		<contact>Jane Smith</contact>
-		<contact>Sally Jones</contact>
-		<contact>Dave Secretary</contact>
-		<notes>SJ presented storyboards for the app. DS employed to help with admin. </notes>
-	</meeting>
-    <meeting>
-		<future-meeting>Future meeting</future-meeting>
-		<date>13/03/2013, 13:30</date>
-		<id>4</id>
-		<contact>Bob Smith</contact> <!--add attributes id-->
-		<contact>Jane Smith</contact>
-		<contact>Sally Jones</contact>
-		<contact>Dave Secretary</contact>
-	</meeting>
-</meeting-list>
+	<id>0</id>
+	<date>Sun Feb 17 13:06:32 GMT 2013</date>
+</meeting>
+<meeting>
+	<id>0</id>
+	<date>Sun Feb 17 13:06:32 GMT 2013</date>
+</meeting>
+<meeting>
+	<id>3</id>
+	<date>Sun Feb 17 13:06:32 GMT 2013</date>
+	<contact>sally</contact>
+	<contact>bob</contact>
+</meeting>
+</meetings-list>

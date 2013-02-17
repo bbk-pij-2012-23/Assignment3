@@ -19,14 +19,18 @@ import assignment3.ContactManagerImpl;
 import assignment3.FutureMeetingImpl;
 import assignment3.Meeting;
 
+
+
 public class ContactManagerImplTest {
 	 Meeting testMeeting;
 	 ContactManagerImpl testContactManager = new ContactManagerImpl();
+	 Set<Contact> contacts;
+	 
 	 
 	@Before
 	public void setUp() throws Exception {
 		Calendar date = new GregorianCalendar(2013,06,03,15,30);
-		Set<Contact> contacts = new HashSet<Contact>();
+		contacts = new HashSet<Contact>();
 		Contact bob = new ContactImpl("bob", 1);
 		Contact sally = new ContactImpl("sally", 2);
 		contacts.add(bob);
@@ -66,13 +70,12 @@ public class ContactManagerImplTest {
 	}
 	
 	/*passes*/
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void testAddFutureMeetingPastDate() {
 		//check added to ContactManagerImpl's meetingList field when empty
 		Set<Contact> contacts = testMeeting.getContacts();
 		Calendar date = new GregorianCalendar(2012,02,02,10,10);
 		testContactManager.addFutureMeeting(contacts, date);
-		assertNotNull(testContactManager.getMeetingList());
 	}
 	
 	/*passes*/
@@ -95,9 +98,15 @@ public class ContactManagerImplTest {
 	}
 
 	/*passes*/
-	@Test(expected= IllegalArgumentException.class)
+	@Test(expected= ClassCastException.class)
 	public void testGetPastMeetingWithFutureDate(){
-		testAddNewPastMeetingWithFutureDate();
+		testAddFutureMeetingEmptyList();
+		testContactManager.getPastMeeting(1).getId();
+	}
+	
+	@Test(expected= IllegalArgumentException.class)
+	public void testGetPastMeetingWithMissingContact(){
+		testAddNewPastMeeting();
 		testContactManager.getPastMeeting(1).getId();
 	}
 	
@@ -183,22 +192,33 @@ public class ContactManagerImplTest {
 		//fail("Not yet implemented");
 	}
 	
-	/*passes*/
-	@Test
+	/**
+	 * fails due to nullpointerexception despite stating that its expected
+	 */
+	@Test (expected = NullPointerException.class)
+	public void testAddNewPastMeetingWithNoContacts() {
+		//test NPE is thrown due to empty contacts set
+		Set<Contact> contacts = null;
+		Calendar date = new GregorianCalendar(2012,02,02,02,02,02);
+		testContactManager.addNewPastMeeting(contacts, date, "text");
+	}
+	
+	
+	/*fails though it catches an illegal argument exception*/
+	@Test (expected = IllegalArgumentException.class)
 	public void testAddNewPastMeetingWithFutureDate() {
 		//check that id matches the expect id (i.e. number of meetings in list)
 		Set<Contact> contacts = testMeeting.getContacts();
 		Calendar date = new GregorianCalendar(2013,06,30,10,00);
 		testContactManager.addNewPastMeeting(contacts, date, "text");
-		assertNotNull(testContactManager.getMeetingList());
-		//fail("Not yet implemented");
 	}
 
 	@Test
 	public void testAddMeetingNotes() {
-		//add testpastmeeting
-		//assertEquals("notes", testPastMeeting.getNotes());
-		fail("Not yet implemented");
+		testAddNewPastMeeting();
+		testContactManager.getPastMeeting(1);
+		assertEquals("text", testContactManager.getPastMeeting(1).getNotes());
+		
 	}
 
 	/*passes*/
@@ -273,34 +293,65 @@ public class ContactManagerImplTest {
 	}
 
 
-	/*passes*/
-	//this is a rubbish test, it only checks whether filename assigned. 
+	/**
+	 * passes
+	 * this only tests whether the method reached the return, not the content of the method*/
 	@Test
-	public void testMakeContactsXMLFileCreated() throws Exception{
+	public void testMakeContactsXMLFileCreatedTrue(){
 		testAddNewContact();
 		//System.out.println(testContactManager.getAllContacts().toString());
-		assertEquals("testcontacts", testContactManager.makeContactsXMLFile("testcontacts")); 
+		assertEquals(true, testContactManager.makeContactsXMLFile()); 
 	}
 	
+	/**
+	 * passes
+	 * this only tests whether the method reached the return, not the content of the method*/
+	@Test
+	public void testMakeContactsXMLFileCreatedFalse(){
+		//System.out.println(testContactManager.getAllContacts().toString());
+		assertEquals(false, testContactManager.makeContactsXMLFile()); 
+	}
 	/*passes*/
 	//only partial test of the method (see above)
 	@Test
 	public void testMakeMeetingsXMLFileCreated() throws Exception{
 		testAddFutureMeetingNotEmptyList();
 		//System.out.println(testContactManager.getMeetingList().toString());
-		assertEquals("testmeetings", testContactManager.makeMeetingsXMLFile("testmeetings")); 
+		assertEquals(true, testContactManager.makeMeetingsXMLFile()); 
+	}
+	
+	/*passes*/
+	//only partial test of the method (see above)
+	@Test
+	public void testMakeMeetingsXMLFileCreatedFalse(){
+		//System.out.println(testContactManager.getMeetingList().toString());
+		assertEquals(false, testContactManager.makeMeetingsXMLFile()); 
+	}
+	
+	/**passes
+	*only partial test of the method (see above)
+	*file shows problem with import
+	*/
+	@Test
+	public void testMakeMeetingsXMLFileCreatedExistingList() {
+		testAddFutureMeetingNotEmptyList();
+		testContactManager.makeMeetingsXMLFile();
+		testContactManager.importMeetings();
+		testContactManager.addFutureMeeting(contacts, Calendar.getInstance());
+		assertEquals(true, testContactManager.makeMeetingsXMLFile()); 
 	}
 	
 	/*passes*/
 	@Test
-	public void testXSLToSet() throws Exception {
+	public void testXMLToSet()  {
 		assertNotNull(testContactManager.importContacts());
 	}
 	
 	/*passes*/
 	@Test
-	public void testXSLToList() throws Exception {
-		assertNotNull(testContactManager.importMeetings());
+	public void testXMLToList() {
+		assertEquals(testContactManager.importMeetings(), testContactManager.getMeetingList());
+		System.out.println(testContactManager.getMeetingList());
 	}
 	
 	/*passes*/

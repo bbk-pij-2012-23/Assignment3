@@ -1,6 +1,7 @@
 package Test;
 
 import static org.junit.Assert.*;
+import TryXML;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -15,7 +16,6 @@ import assignment3.ContactImpl;
 import assignment3.ContactManagerImpl;
 import assignment3.FutureMeetingImpl;
 import assignment3.Meeting;
-import assignment3.TryXML;
 
 public class TryXMLTest {
 	Meeting testMeeting;
