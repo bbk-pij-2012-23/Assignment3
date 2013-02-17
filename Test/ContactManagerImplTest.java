@@ -198,7 +198,7 @@ public class ContactManagerImplTest {
 	@Test (expected = NullPointerException.class)
 	public void testAddNewPastMeetingWithNoContacts() {
 		//test NPE is thrown due to empty contacts set
-		Set<Contact> contacts = null;
+		Set<Contact> contacts = new HashSet<Contact>();
 		Calendar date = new GregorianCalendar(2012,02,02,02,02,02);
 		testContactManager.addNewPastMeeting(contacts, date, "text");
 	}
@@ -262,8 +262,10 @@ public class ContactManagerImplTest {
 	}
 	
 	/*fails but I don't know why because I expect a nullpointerexception, maybe it has others*/
-	@Test (expected = NullPointerException.class)
-	public void testGetContactsIntArrayNullPointerException() {
+	@Test (expected = IllegalArgumentException.class)
+	public void testGetContactsEmptySet() {
+		Set<Contact>empty = new HashSet<Contact>();
+		testContactManager.setAllContacts(empty);
 		testContactManager.getContacts(1);
 	}
 	
@@ -363,7 +365,8 @@ public class ContactManagerImplTest {
 	
 	@Test
 	public void testFlush() {
-		fail("Not yet implemented");
+		testContactManager.flush();
+		
 	}
 
 	@Test

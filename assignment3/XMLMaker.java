@@ -1,23 +1,8 @@
 package assignment3;
 
 //Draws heavily on the tutorial by Lars Vogel (http://www.vogella.com/articles/JavaXML/article.html)
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.HashSet;
-
-
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
@@ -26,7 +11,7 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 public class XMLMaker {
-	private String fileName;
+
 	
 	public void createSkeleton(XMLEventWriter eventWriter, String xslRef, String rootElement)  {
 		try{
@@ -64,15 +49,7 @@ public class XMLMaker {
 		eventWriter.add(newLine);
 	}
 
-	public void setFile(String string) {
-		this.fileName = fileName;	
-	}	
 	
-	public String getFile(){
-		return fileName;
-	}
-		
-		//need to control the create element calls from the type specific stuff
 	
 	
 }

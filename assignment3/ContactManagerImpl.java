@@ -323,24 +323,19 @@ public class ContactManagerImpl implements ContactManager {
 	@Override
 	public Set<Contact> getContacts(int... ids) {
 		Set<Contact> returnedSet = new HashSet<Contact>();
-		try{
-			for (int id : ids){
-				Iterator<Contact> it = getAllContacts().iterator();
-				boolean idExists = false;
-				while (it.hasNext()){
-					Contact e = it.next();
-					if(e.getId()==id){
-						returnedSet.add(e);
-						idExists = true;
-					}
-				}
-				if (idExists == false){
-					throw new IllegalArgumentException("this contact could not be found");
+		for (int id : ids){
+			Iterator<Contact> it = getAllContacts().iterator();
+			boolean idExists = false;
+			while (it.hasNext()){
+				Contact e = it.next();
+				if(e.getId()==id){
+					returnedSet.add(e);
+					idExists = true;
 				}
 			}
-		}catch(NullPointerException ex){
-			ex.printStackTrace();
-			System.out.println("There are no contacts in the list");
+			if (idExists == false){
+				throw new IllegalArgumentException("this contact could not be found");
+			}
 		}
 		return returnedSet;
 	}
@@ -511,114 +506,6 @@ public class ContactManagerImpl implements ContactManager {
 		}
 
 	}
-
-	private void launch(){
-/*		try{
-			importContacts();
-			importMeetings();
-		}catch(Exception ex){
-			ex.printStackTrace();
-		}
-*/		CommandLineInterface run = new CommandLineInterface();
-		run.text();
-		run.menu();
-		String str = "7";
-		
-		switch(str){
-		case "1": System.out.println("Please type in the name of the contact you want to add");
-		String name = System.console().readLine();
-		System.out.println("Please type in any notes about the contact, e.g. job title, role in startup, contact details, expertise etc. else type none (you can add notes at a later date).");
-		String notes = "" + System.console().readLine();
-		addNewContact(name,notes);
-		run.menu();
-		
-		//this does not handle incorrect format yet - UI is to show working code
-		case "2": System.out.println("Type in a date and time for your meeting in the form dd/mm/yyyy hh:mm (24hr clock).");
-/*		str = System.console().readLine();
-		int yyyy = Integer.parseInt(str.substring(0, 3));
-		int mm = Integer.parseInt(str.substring(5, 6));
-		int dd = Integer.parseInt(str.substring(8, 9));
-		int hh = Integer.parseInt(str.substring(11, 12));
-		int min = Integer.parseInt(str.substring(14, 15));
-		Calendar date = new GregorianCalendar(yyyy,mm,dd,hh,min);
-		System.out.println(allContacts.toString());
-		System.out.println("your contact list is displayed above, choose the contacts to invite to this meeting, then enter their ids.");
-		str = System.console().readLine();
-		String[] arrayStr = str.split(" ");
-		int i = 0;
-		while (i<arrayStr.length){
-			
-		}
-		//not sure how to get these into the right int vararg
-		//...
-		Set<Contact> meetingContacts = getContacts(ids);
-		addFutureMeeting(meetingContacts, date);
-*/		run.menu();
-		
-		case "3": System.out.println(""); //needs thought
-/*		addNewPastMeeting(contacts,date,notes);
-*/		run.menu();
-		
-		case "4": System.out.println("Enter the name of the contact for whom you want to get the meeting schedule:");
-		str = System.console().readLine();
-		Iterator<Contact> it = getAllContacts().iterator();
-
-		while(it.hasNext()){
-			Contact contact = it.next();
-			if (contact.getName().equals(str)){
-				getFutureMeetingList(contact);
-			}	
-		}
-		run.menu();
-		
-		case "5": System.out.println("enter a date to display meeting schedule for that day using the format yyyy mm dd:");
-		// for demo purposes only - would need to handle various deviations from needed format
-		str = System.console().readLine();
-		int yyyy = Integer.parseInt(str.substring(0, 3));
-		int mm = Integer.parseInt(str.substring(5, 6));
-		int dd = Integer.parseInt(str.substring(8, 9));
-		Calendar date = new GregorianCalendar(yyyy,mm,dd);
-		Iterator<Meeting> itM = getMeetingList().iterator();
-		while(itM.hasNext()){
-			Meeting meeting = itM.next();
-			if (meeting.getDate().equals(date)){
-				getFutureMeetingList(date);
-			}	
-		}
-		run.menu();
-		
-		case "6": System.out.println(allContacts.toString());
-/*		System.out.println("your contact list is displayed above, choose the contacts to invite to this meeting, then enter their ids.");
-		str = System.console().readLine();
-		//not sure how to get these into the right int vararg
-		//...
-		int ids;
-		Set<Contact> meetingContacts = getContacts(ids);
-*/		run.menu();
-
-		case "7": 
-			try{
-				//makeContactsXMLFile("contacts");
-				//makeMeetingsXMLFile("meetings");
-				flush();
-			}catch(Exception ex){
-				ex.printStackTrace();
-				System.out.println("there was a problem saving your data, if you would like to try again please select menu option 7.");
-				run.menu();
-			}
-			
-		}
-		
-		//create a meeting list also
-	}
 	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		ContactManagerImpl run = new ContactManagerImpl();
-		run.launch();
-		
-	}
-
 }
+	
